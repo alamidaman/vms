@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102d4d">
+<title>Email Log | Alam Idaman</title>
+<style>
+:root{--navy:#102d4d;--blue:#245a91;--green:#187044;--red:#b42318;--text:#1c2d40;--muted:#65758a;--background:#f3f6fa;--border:#e1e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--background)}a{text-decoration:none}
+.header{background:var(--navy);color:white}.header-inner{max-width:1120px;margin:auto;padding:18px 24px;display:flex;align-items:center;gap:16px}
+.logo{width:66px;height:66px;object-fit:contain;background:white;padding:5px;border-radius:12px;flex-shrink:0}.brand h1{font-size:23px;margin:0 0 5px;letter-spacing:1px}.brand p{margin:0;color:#d6e4f2;font-size:13px;letter-spacing:.5px}
+.header-actions{margin-left:auto;display:flex;gap:10px}.header-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border:1px solid rgba(255,255,255,.55);border-radius:10px;color:white;background:rgba(255,255,255,.1);font-size:12px;font-weight:bold;cursor:pointer;white-space:nowrap;gap:6px}
+.banner{position:relative;height:230px;overflow:hidden;background:#183c60}.banner img{width:100%;height:100%;object-fit:cover;display:block}.banner-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(90deg,rgba(8,29,52,.76),rgba(8,29,52,.22))}.banner-content{color:white;max-width:760px}.banner-content h2{font-size:clamp(28px,4vw,43px);margin:0 0 12px}.banner-content p{font-size:15px;line-height:1.7;margin:0}
+.container{max-width:1120px;margin:auto;padding:32px 24px 45px}.section-heading{text-align:center;margin-bottom:22px}.section-heading h2{color:var(--navy);font-size:27px;margin:0 0 10px}.section-heading p{color:var(--muted);margin:0;line-height:1.6}
+.panel{background:white;border:1px solid var(--border);border-radius:15px;padding:22px;margin-bottom:20px;box-shadow:0 8px 26px rgba(16,45,77,.04)}.panel h3{color:var(--navy);margin:0 0 16px;font-size:19px}
+.quota-panel{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(135deg,#fff,#f3f8ff);border-left:5px solid var(--blue)}.quota-left{display:flex;align-items:center;gap:16px}.quota-icon{width:54px;height:54px;display:flex;align-items:center;justify-content:center;border-radius:13px;background:#e6eff9;font-size:27px}.quota-label{font-size:13px;color:var(--muted);margin-bottom:5px}.quota-value{font-size:32px;font-weight:800;color:var(--navy);line-height:1.1}.quota-unit{font-size:12px;color:var(--muted);margin-top:5px}.quota-actions{display:flex;align-items:center;gap:10px}
+.filter-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr auto auto;gap:10px;align-items:end}.form-group label{display:block;margin-bottom:7px;font-size:13px;font-weight:bold;color:var(--navy)}
+input,select{width:100%;min-width:0;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:var(--text);font-size:14px}
+button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.btn-green{background:var(--green)}.btn-light{background:#e8eef5;color:var(--navy)}
+.status-message{margin-top:12px;font-size:13px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}.status-message.error{color:var(--red)}.status-message.success{color:var(--green)}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:12px 11px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:middle}th{color:var(--navy);background:#f5f8fc;white-space:nowrap}td{overflow-wrap:anywhere}.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap}.status-sent{background:#e2f5e9;color:#187044}.status-failed{background:#fde5e5;color:#c62828}.status-unknown{background:#edf2f7;color:#64748b}.empty{padding:24px 10px;text-align:center;color:var(--muted);line-height:1.7}
+.pagination{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:18px}.pagination button{min-width:38px;min-height:36px;padding:8px 11px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:var(--navy);font-size:12px}.pagination button.active{background:var(--blue);border-color:var(--blue);color:#fff}.pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination-info{width:100%;margin-top:3px;text-align:center;color:var(--muted);font-size:12px}
+.footer{background:var(--navy);color:#d5e2ef;text-align:center;padding:23px 18px;font-size:12px;line-height:1.8}.footer strong{color:white}
+@media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-grid button{width:100%}}
+@media(max-width:760px){.header-inner{flex-wrap:wrap;padding:15px 16px}.logo{width:54px;height:54px}.brand h1{font-size:19px}.brand p{font-size:10px}.header-actions{width:100%;margin-left:0}.header-btn{flex:1}.banner{height:200px}.container{padding:25px 13px 35px}.section-heading h2{font-size:23px}.panel{padding:16px}.filter-grid{grid-template-columns:1fr}.quota-panel{align-items:flex-start;flex-direction:column}.quota-actions{width:100%}.quota-actions button{flex:1}.table-wrap table{min-width:1000px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner">
+<img src="../logo.png" alt="Logo Alam Idaman" class="logo">
+<div class="brand"><h1>ALAM IDAMAN</h1><p>PORTAL PENDAFTARAN PELAWAT</p></div>
+<div class="header-actions"><a class="header-btn" href="dashboard.html">← DASHBOARD</a><button class="header-btn" id="logout" type="button">🔐 LOG KELUAR</button></div>
+</div></header>
+<section class="banner"><img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman"><div class="banner-overlay"><div class="banner-content"><h2>Email Log</h2><p>Semakan rekod penghantaran e-mel dan baki kuota harian VMS Alam Idaman.</p></div></div></section>
+<main class="container">
+<div class="section-heading"><h2>Rekod Penghantaran Email</h2><p>Pantau status penghantaran Visitor Pass, Expiry Reminder dan e-mel sistem.</p></div>
+
+<section class="panel quota-panel">
+  <div class="quota-left"><div class="quota-icon" aria-hidden="true">📧</div><div><div class="quota-label">BAKI KUOTA EMAIL HARI INI</div><div class="quota-value" id="quotaValue">—</div><div class="quota-unit">Penerima e-mel masih boleh dihantar hari ini</div><div id="quotaUpdated" class="status-message">Menunggu semakan kuota...</div></div></div>
+  <div class="quota-actions"><button type="button" class="btn-green" id="refreshQuota">↻ SEMAK KUOTA</button></div>
+</section>
+
+<section class="panel"><h3>🔎 Penapis Email Log</h3>
+<form id="filterForm" class="filter-grid">
+  <div class="form-group"><label for="emailType">Jenis Email</label><select id="emailType"><option value="">Semua Jenis</option><option value="Visitor Pass">Visitor Pass</option><option value="Expiry Reminder">Expiry Reminder</option><option value="Registration Error">Registration Error</option></select></div>
+  <div class="form-group"><label for="emailStatus">Status</label><select id="emailStatus"><option value="">Semua Status</option><option value="SENT">SENT</option><option value="FAILED">FAILED</option></select></div>
+  <div class="form-group"><label for="q">Carian</label><input id="q" type="search" placeholder="Visitor ID / Unit / Email" autocomplete="off"></div>
+  <button id="search" type="submit">CARI</button><button id="reset" type="button" class="btn-light">RESET</button>
+</form><div id="status" class="status-message">Sedang mengesahkan sesi login...</div></section>
+
+<section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 style="margin:0">Senarai Rekod Email</h3><span id="recordCount" class="status-message" style="margin:0"></span></div>
+<div class="table-wrap"><table><thead><tr><th>Tarikh & Masa</th><th>Jenis Email</th><th>Visitor ID</th><th>Unit Rumah</th><th>Email Penerima</th><th>Subject</th><th>Status</th><th>Mesej Ralat</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="empty">Memuatkan rekod email...</td></tr></tbody></table></div>
+<div id="pagination" class="pagination" aria-label="Navigasi halaman email log"></div><div id="count" class="status-message"></div></section>
+</main>
+<footer class="footer"><strong>ALAM IDAMAN</strong><br>Visitor Management System (VMS)<br>Rekod penghantaran e-mel untuk rujukan pengurusan.</footer>
+<script>
+(() => {
+const API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+const LOGIN_API_URL=API_URL, LOGIN_URL='https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+const TOKEN_KEY='PPAI_SESSION_TOKEN', token=sessionStorage.getItem(TOKEN_KEY), $=id=>document.getElementById(id);
+let records=[],currentPage=1;const PAGE_SIZE=10;
+if(!token){location.replace(LOGIN_URL);return;}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function jsonp(baseUrl,params={}){return new Promise((resolve,reject)=>{const cb='ppaiCb'+Date.now()+Math.floor(Math.random()*10000),script=document.createElement('script');let settled=false;const timer=setTimeout(()=>{cleanup();reject(Error('API tidak memberi respons. Sila semak deployment Apps Script.'));},20000);function cleanup(){if(settled)return;settled=true;clearTimeout(timer);delete window[cb];script.remove();}window[cb]=data=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(Error('Gagal menghubungi API. Semak URL Web App dan akses deployment.'));};const url=new URL(baseUrl);Object.entries({...params,token,callback:cb}).forEach(([k,v])=>url.searchParams.set(k,String(v??'')));script.src=url.toString();document.head.appendChild(script);});}
+function api(task,p={}){return jsonp(API_URL,{action:'emailLog',task,...p});}
+function message(msg,type='success'){$('status').textContent=msg;$('status').className='status-message'+(type==='error'?' error':' success');}
+function formatQuotaTime(value){if(!value)return '';return 'Dikemas kini: '+value;}
+function render(){const total=records.length,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));currentPage=Math.min(currentPage,totalPages);const start=(currentPage-1)*PAGE_SIZE,items=records.slice(start,start+PAGE_SIZE);
+$('rows').innerHTML=items.length?items.map(r=>{const status=String(r.status||'').trim().toUpperCase();const statusClass=status==='SENT'?'status-sent':status==='FAILED'?'status-failed':'status-unknown';return `<tr><td>${esc(r.timestamp||'—')}</td><td>${esc(r.emailType||'—')}</td><td><b>${esc(r.visitorId||'—')}</b></td><td>${esc(r.unit||'—')}</td><td>${esc(r.recipient||'—')}</td><td>${esc(r.subject||'—')}</td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td>${esc(r.errorMessage||'—')}</td></tr>`;}).join(''):'<tr><td colspan="8" class="empty">Tiada rekod email ditemui.</td></tr>';
+$('count').textContent=total?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod.`:'0 rekod ditemui';$('recordCount').textContent=total+' rekod';
+const pag=$('pagination');if(totalPages<=1){pag.innerHTML='';return;}let out=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;const pages=new Set([1,totalPages]);for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);let prev=0;for(const p of [...pages].sort((a,b)=>a-b)){if(prev&&p-prev>1)out+='<span class="ellipsis">…</span>';out+=`<button type="button" data-page="${p}" class="${p===currentPage?'active':''}" ${p===currentPage?'aria-current="page"':''}>${p}</button>`;prev=p;}out+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button><div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;pag.innerHTML=out;}
+async function search(){message('Sedang mendapatkan rekod email...');$('rows').innerHTML='<tr><td colspan="8" class="empty">Memuatkan rekod...</td></tr>';$('pagination').innerHTML='';const result=await api('search',{emailType:$('emailType').value,emailStatus:$('emailStatus').value,q:$('q').value.trim()});if(!result.success)throw Error(result.message||'Carian Email Log gagal.');records=result.records||[];currentPage=1;render();message('Carian selesai. '+records.length+' rekod ditemui.');}
+async function refreshQuota(){const b=$('refreshQuota');b.disabled=true;$('quotaValue').textContent='...';$('quotaUpdated').textContent='Sedang menyemak kuota...';try{const result=await api('quota');if(!result.success)throw Error(result.message||'Semakan kuota gagal.');$('quotaValue').textContent=Number(result.remaining).toLocaleString('en-MY');$('quotaUpdated').textContent=formatQuotaTime(result.checkedAt)||'Semakan berjaya';}catch(e){$('quotaValue').textContent='—';$('quotaUpdated').textContent=e.message;$('quotaUpdated').className='status-message error';}finally{b.disabled=false;}}
+async function loginCheck(){return jsonp(LOGIN_API_URL,{action:'api',task:'me'});}
+$('filterForm').onsubmit=e=>{e.preventDefault();search().catch(e=>message(e.message,'error'));};
+$('reset').onclick=()=>{$('emailType').value='';$('emailStatus').value='';$('q').value='';search().catch(e=>message(e.message,'error'));};
+$('refreshQuota').onclick=refreshQuota;
+$('pagination').onclick=e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const p=Number(b.dataset.page);if(p<1||p>Math.ceil(records.length/PAGE_SIZE))return;currentPage=p;render();};
+$('logout').onclick=async()=>{try{await jsonp(LOGIN_API_URL,{action:'api',task:'logout'});}catch(e){}sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);};
+(async()=>{try{const s=await loginCheck();if(!s.success||!s.user){sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);return;}await Promise.all([refreshQuota(),search()]);}catch(e){message(e.message,'error');}})();
+})();
+</script>
+</body>
+</html>
