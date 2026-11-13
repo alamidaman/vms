@@ -57,7 +57,7 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
 <script>
 (() => {
 const API_URL='https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
-const LOGIN_API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec', LOGIN_URL='https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+const LOGIN_API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec', LOGIN_URL='https://alamidaman.github.io/vms/admin/';
 const TOKEN_KEY='PPAI_SESSION_TOKEN', token=sessionStorage.getItem(TOKEN_KEY), $=id=>document.getElementById(id);
 let records=[],currentPage=1;const PAGE_SIZE=10;
 if(!token){location.replace(LOGIN_URL);return;}
