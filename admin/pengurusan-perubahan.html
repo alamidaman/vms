@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#102d4d">
 <title>Pengurusan Perubahan | Alam Idaman</title>
-<link rel="icon" type="image/x-icon" href="/alam-idaman-qr-scanner/favicon.ico">
+<link rel="icon" type="image/x-icon" href="/vms/favicon.ico">
 <style>
 :root{--navy:#102d4d;--blue:#245a91;--green:#187044;--red:#b42318;--text:#1c2d40;--muted:#65758a;--background:#f3f6fa;--border:#e1e8f0}
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--background)}a{text-decoration:none}
@@ -62,7 +62,7 @@ th,td{padding:13px 12px;border-bottom:1px solid #edf0f4;text-align:left;vertical
 (() => {
 const API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
 const LOGIN_API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
-const LOGIN_URL='https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+const LOGIN_URL='https://alamidaman.github.io/vms/admin/';
 const TOKEN_KEY='PPAI_SESSION_TOKEN',token=sessionStorage.getItem(TOKEN_KEY),$=id=>document.getElementById(id);
 let records=[],currentPage=1;const PAGE_SIZE=10;
 if(!token){location.replace(LOGIN_URL);return;}
