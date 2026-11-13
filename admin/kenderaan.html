@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102d4d">
+<title>Pengurusan Kenderaan | Alam Idaman</title>
+<style>
+        :root {
+            --navy: #102d4d;
+            --blue: #245a91;
+            --green: #187044;
+            --red: #b42318;
+            --text: #1c2d40;
+            --muted: #65758a;
+            --background: #f3f6fa;
+            --border: #e1e8f0;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, Helvetica, sans-serif; color: var(--text); background: var(--background); }
+        a { text-decoration: none; }
+        .header { background: var(--navy); color: white; }
+        .header-inner { max-width: 1120px; margin: auto; padding: 18px 24px; display: flex; align-items: center; gap: 16px; }
+        .logo { width: 66px; height: 66px; object-fit: contain; background: white; padding: 5px; border-radius: 12px; flex-shrink: 0; }
+        .brand h1 { font-size: 23px; margin: 0 0 5px; letter-spacing: 1px; }
+        .brand p { margin: 0; color: #d6e4f2; font-size: 13px; letter-spacing: .5px; }
+        .header-actions { margin-left: auto; display: flex; gap: 10px; }
+        .header-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 10px 14px; border: 1px solid rgba(255,255,255,.55); border-radius: 10px; color: white; background: rgba(255,255,255,.10); font-size: 12px; font-weight: bold; cursor: pointer; white-space: nowrap; gap: 6px; transition: background .18s ease, border-color .18s ease; }
+        .header-btn:hover { background: rgba(255,255,255,.2); border-color: #fff; }
+        .banner { position: relative; height: 260px; overflow: hidden; background: #183c60; }
+        .banner img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .banner-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; background: linear-gradient(90deg, rgba(8,29,52,.76), rgba(8,29,52,.22)); }
+        .banner-content { color: white; max-width: 760px; }
+        .banner-content h2 { font-size: clamp(28px,4vw,43px); margin: 0 0 12px; }
+        .banner-content p { font-size: 15px; line-height: 1.7; margin: 0; }
+        .container { max-width: 1120px; margin: auto; padding: 35px 24px 45px; }
+        .section-heading { text-align: center; margin-bottom: 25px; }
+        .section-heading h2 { color: var(--navy); font-size: 27px; margin: 0 0 10px; }
+        .section-heading p { color: var(--muted); margin: 0; line-height: 1.6; }
+        .panel { background: white; border: 1px solid var(--border); border-radius: 15px; padding: 22px; margin-bottom: 22px; box-shadow: 0 8px 26px rgba(16,45,77,.04); }
+        .panel h3 { color: var(--navy); margin: 0 0 17px; font-size: 19px; }
+        .search-row { display: flex; gap: 10px; }
+        input, select { width: 100%; min-width: 0; padding: 12px 13px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: var(--text); font-size: 14px; }
+        input:focus, select:focus { outline: 2px solid #b8d4f1; border-color: var(--blue); }
+        .search-row input { flex: 1; }
+        button { border: 0; border-radius: 8px; padding: 12px 18px; background: var(--blue); color: white; font-size: 13px; font-weight: bold; cursor: pointer; }
+        button:disabled { opacity: .55; cursor: wait; }
+        .btn-green { background: var(--green); }
+        .btn-light { background: #e8eef5; color: var(--navy); }
+        .btn-red { background: var(--red); }
+        .status-message { margin-top: 14px; font-size: 13px; line-height: 1.6; color: var(--muted); overflow-wrap: anywhere; }
+        .status-message.error { color: var(--red); }
+        .status-message.success { color: var(--green); }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 13px 12px; border-bottom: 1px solid #edf0f4; text-align: left; vertical-align: middle; }
+        th { color: var(--navy); background: #f5f8fc; white-space: nowrap; }
+        td { overflow-wrap: anywhere; }
+        .unit { font-weight: bold; color: var(--navy); white-space: nowrap; }
+        .badge { display: inline-block; border-radius: 20px; padding: 5px 9px; font-size: 11px; font-weight: bold; white-space: nowrap; background: #edf1f5; color: #475569; }
+        .badge.paid, .badge.valid { background: #e2f5e9; color: #187044; }
+        .badge.temp { background: #fff0d5; color: #895900; }
+        .badge.not-paid { background: #fee4e2; color: #b42318; }
+        .actions { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: nowrap; min-width: 150px; }
+        .actions button, .edit-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 8px 12px; border-radius: 7px; font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap; box-shadow: 0 2px 4px rgba(16,45,77,.12); transition: background .18s ease, transform .18s ease, box-shadow .18s ease; }
+        .edit-btn { background: #245a91; color: #fff; }
+        .edit-btn:hover { background: #194574; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(36,90,145,.22); }
+        .actions .btn-red { background: #b42318; color: #fff; }
+        .actions .btn-red:hover { background: #8f1d14; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(180,35,24,.2); }
+        button:hover { filter: brightness(.97); }
+        button:focus-visible, a.header-btn:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+        .search-row button, #add, .form-actions button, #close { min-height: 40px; border-radius: 9px; }
+        #add { box-shadow: 0 3px 7px rgba(24,112,68,.16); }
+        #add:hover { background: #125b36; }
+        #reset, #close, #cancel { background: #e8eef5; color: #102d4d; }
+        #reset:hover, #close:hover, #cancel:hover { background: #d9e3ef; }
+        @media (max-width: 900px) { .actions { gap: 6px; min-width: 140px; } .actions button { padding: 8px 10px; font-size: 10px; } }
+
+        /* Pagination ringkas dengan ellipsis */
+        .pagination { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:7px; margin-top:18px; }
+        .pagination button { min-width:38px; min-height:36px; padding:8px 11px; border:1px solid #d6e0eb; border-radius:8px; background:#fff; color:var(--navy); font-size:12px; }
+        .pagination button.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+        .pagination button:disabled { opacity:.4; cursor:not-allowed; }
+        .pagination .ellipsis { display:inline-flex; align-items:center; justify-content:center; min-width:20px; padding:0 2px; color:var(--muted); font-size:14px; }
+        .pagination-info { width:100%; margin-top:3px; text-align:center; color:var(--muted); font-size:12px; }
+        .empty { padding: 24px 10px; text-align: center; color: var(--muted); line-height: 1.7; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+        .form-group label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: bold; color: var(--navy); }
+        .readonly { background: #edf1f5; color: #64748b; cursor: not-allowed; }
+        .help { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+        .form-actions { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+        .footer { background: var(--navy); color: #d5e2ef; text-align: center; padding: 23px 18px; font-size: 12px; line-height: 1.8; }
+        .footer strong { color: white; }
+        @media (max-width: 760px) {
+            .header-inner { flex-wrap: wrap; padding: 15px 16px; }
+            .logo { width: 54px; height: 54px; }
+            .brand h1 { font-size: 19px; }
+            .brand p { font-size: 10px; }
+            .header-actions { width: 100%; margin-left: 0; }
+            .header-btn { flex: 1; }
+            .banner { height: 220px; }
+            .container { padding: 27px 13px 35px; }
+            .section-heading h2 { font-size: 23px; }
+            .panel { padding: 16px; }
+            .search-row { flex-direction: column; }
+            .search-row button { width: 100%; }
+            .form-grid { grid-template-columns: 1fr; }
+            .table-wrap table { min-width: 800px; }
+            .pagination { gap:5px; }
+            .pagination button { min-width:34px; min-height:34px; padding:7px 9px; }
+        }
+        .modal { display:none; position:fixed; inset:0; background:rgba(16,24,40,.65); align-items:center; justify-content:center; padding:15px; z-index:1000; }
+        .modal.show { display:flex; }
+        .modal-box { background:white; padding:22px; border-radius:15px; width:min(620px,100%); max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+        .modal-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+        .modal-head h3 { margin:0; color:var(--navy); }
+        @media(max-width:760px) { .form-grid { grid-template-columns:1fr; } .table-wrap table { min-width:800px; } }
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner">
+<img src="../logo.png" alt="Logo Alam Idaman" class="logo">
+<div class="brand"><h1>ALAM IDAMAN</h1><p>PORTAL PENDAFTARAN PELAWAT</p></div>
+<div class="header-actions"><a class="header-btn" href="dashboard.html">← DASHBOARD</a><button class="header-btn" id="logout" type="button">🔐 LOG KELUAR</button></div>
+</div></header>
+<section class="banner"><img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman"><div class="banner-overlay"><div class="banner-content"><h2>Pengurusan Kenderaan</h2><p>Carian, semakan dan kemas kini maklumat kenderaan penduduk Alam Idaman.</p></div></div></section>
+<main class="container">
+<div class="section-heading"><h2>Senarai Kenderaan</h2><p>Carian, tambah, edit dan padam rekod kenderaan.</p></div>
+<section class="panel"><h3>🔎 Carian Kenderaan</h3>
+<form id="searchForm" class="search-row"><input id="q" type="search" placeholder="Cari unit rumah, nama, telefon atau nombor plat..." autocomplete="off"><button id="search" type="submit">CARI</button><button id="reset" type="button" class="btn-light">RESET</button></form>
+<div id="status" class="status-message">Sedang mengesahkan sesi login...</div></section>
+<section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 style="margin:0">Rekod Kenderaan</h3><button id="add" type="button" class="btn-green">+ TAMBAH KENDERAAN</button></div>
+<div class="table-wrap"><table><thead><tr><th>Unit Rumah</th><th>Nama Penduduk</th><th>No. Telefon</th><th>Kategori</th><th>Jenis Kenderaan</th><th>No. Plate</th><th>No.</th><th>Tindakan</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="empty">Memuatkan rekod...</td></tr></tbody></table></div>
+<div id="pagination" class="pagination" aria-label="Navigasi halaman rekod"></div>
+<div id="count" class="status-message"></div></section>
+<section class="panel" id="whatsappPanel" style="display:none"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px"><h3 style="margin:0">📋 Ringkasan WhatsApp</h3><button id="copySummary" type="button" class="btn-green">SALIN UNTUK WHATSAPP</button></div><textarea id="whatsappSummary" rows="9" style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font:14px/1.6 Arial,Helvetica,sans-serif;resize:vertical" readonly placeholder="Ringkasan carian kenderaan..."></textarea><div class="help">Ringkasan dipaparkan apabila carian menemui rekod. Tekan SALIN untuk copy dan paste ke WhatsApp.</div><div id="summaryStatus" class="status-message"></div></section>
+</main>
+<footer class="footer"><strong>ALAM IDAMAN</strong><br>Visitor Management System (VMS)<br>Sila pastikan semua maklumat kenderaan adalah tepat.</footer>
+<div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle">Tambah Kenderaan</h3><button id="close" type="button" class="btn-light">TUTUP</button></div>
+<div id="formStatus" class="status-message"></div><form id="form"><input type="hidden" id="row"><div class="form-grid">
+<div class="form-group"><label for="unit">Unit Rumah *</label><select id="unit" required></select></div>
+<div class="form-group"><label for="category">Kategori *</label><select id="category" required><option>Utama</option><option>Extra</option></select></div>
+<div class="form-group"><label for="type">Jenis Kenderaan *</label><select id="type" required><option>Kereta</option><option>Motosikal</option><option>Van</option><option>Lori</option><option>Lain-lain</option></select></div>
+<div class="form-group"><label for="plate">No. Plate *</label><input id="plate" required maxlength="30" placeholder="Contoh: WVF8992"></div>
+</div><p class="help">Unit rumah tidak boleh diubah semasa mengedit rekod.</p><div class="form-actions"><button type="button" id="cancel" class="btn-light">BATAL</button><button id="save" type="submit" class="btn-green">SIMPAN</button></div></form></div></div>
+<script>
+(() => {
+const API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+const LOGIN_API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+const LOGIN_URL='https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+const TOKEN_KEY='PPAI_SESSION_TOKEN', token=sessionStorage.getItem(TOKEN_KEY), $=id=>document.getElementById(id);
+let records=[],units=[],mode='add',currentPage=1;
+const PAGE_SIZE=10;
+if(!token){location.replace(LOGIN_URL);return;}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function jsonp(baseUrl, params={}){return new Promise((resolve,reject)=>{const cb='ppaiCb'+Date.now()+Math.floor(Math.random()*10000);const script=document.createElement('script');let settled=false;const timer=setTimeout(()=>{cleanup();reject(Error('API tidak memberi respons dalam 20 saat. Semak URL deployment backend kenderaan dan fungsi doGet(e).'));},20000);function cleanup(){if(settled)return;settled=true;clearTimeout(timer);delete window[cb];script.remove();}window[cb]=data=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(Error('Gagal menghubungi API. Semak URL Web App dan kebenaran akses deployment.'));};const url=new URL(baseUrl);Object.entries({...params,token,callback:cb}).forEach(([key,value])=>url.searchParams.set(key,String(value??'')));script.src=url.toString();document.head.appendChild(script);});}
+function api(task,p={}){return jsonp(API_URL+'?'+new URLSearchParams({action:'kenderaan',task,...p}));}
+function message(msg,type='ok',id='status'){$(id).textContent=msg;$(id).className='status-message'+(type==='error'?' error':' success');}
+function clear(id='status'){$(id).className='status-message';$(id).textContent='';}
+function loginCheck(){return jsonp(LOGIN_API_URL,{action:'api',task:'me'});}
+async function loadUnits(){const r=await api('units');if(!r.success)throw Error(r.message);units=r.units||[];$('unit').innerHTML='<option value="">Pilih Unit Rumah</option>'+units.map(u=>`<option value="${esc(u.unit)}">${esc(u.unit)} — ${esc(u.name)}</option>`).join('');}
+function updateSummary() {
+  const query = $('q').value.trim();
+
+  if (!query || !records.length) {
+    $('whatsappPanel').style.display = 'none';
+    $('whatsappSummary').value = '';
+    $('summaryStatus').textContent = '';
+    return;
+  }
+
+  const grouped = new Map();
+
+  records.forEach(r => {
+    const key = [r.unit || '', r.name || '', r.phone || '', r.email || ''].join('|');
+
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        unit: r.unit,
+        name: r.name,
+        phone: r.phone,
+        email: r.email,
+        vehicles: []
+      });
+    }
+
+    grouped.get(key).vehicles.push(r);
+  });
+
+  const lines = [];
+
+  [...grouped.values()].forEach((resident, index) => {
+    if (index > 0) lines.push('');
+
+    lines.push('*SENARAI TERKINI KENDERAAN*');
+    lines.push(`*Unit Rumah:* ${resident.unit || '—'}`);
+    lines.push(`*Nama Penduduk:* ${resident.name || '—'}`);
+    lines.push(`*No. Telefon:* ${resident.phone || '—'}`);
+    lines.push(`*Email:* ${resident.email || '—'}`);
+
+    resident.vehicles.forEach((vehicle, i) => {
+      const type = vehicle.vehicleType || '—';
+      const plate = String(vehicle.plate || '')
+        .replace(/\s+/g, '')
+        .toUpperCase() || '—';
+
+      lines.push(`*Kenderaan ${i + 1}:* ${type} - ${plate}`);
+    });
+  });
+
+  $('whatsappSummary').value = lines.join('\n');
+  $('whatsappPanel').style.display = 'block';
+  $('summaryStatus').textContent = '';
+}
+function renderPage(){
+ const total=records.length;
+ const totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+ if(currentPage>totalPages)currentPage=totalPages;
+ const start=(currentPage-1)*PAGE_SIZE;
+ const pageRecords=records.slice(start,start+PAGE_SIZE);
+ $('rows').innerHTML=pageRecords.length?pageRecords.map(r=>`<tr><td><b>${esc(r.unit)}</b></td><td>${esc(r.name)}</td><td>${esc(r.phone)}</td><td>${esc(r.category)}</td><td>${esc(r.vehicleType)}</td><td><b>${esc(r.plate)}</b></td><td>${esc(r.no)}</td><td><div class="actions"><button class="edit-btn" data-edit="${r.row}">EDIT</button><button class="btn-red" data-del="${r.row}">PADAM</button></div></td></tr>`).join(''):'<tr><td colspan="8" class="empty">Tiada rekod kenderaan ditemui.</td></tr>';
+ $('count').textContent=total?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod (${PAGE_SIZE} rekod setiap halaman).`:'0 rekod ditemui';
+ const pagination=$('pagination');
+ if(totalPages<=1){pagination.innerHTML='';return;}
+ let html=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;
+ const pages = new Set([1, totalPages]);
+ for (let p = Math.max(1, currentPage - 2); p <= Math.min(totalPages, currentPage + 2); p++) pages.add(p);
+ const sortedPages = Array.from(pages).sort((a, b) => a - b);
+ let previous = 0;
+ for (const page of sortedPages) {
+   if (previous && page - previous > 1) {
+     html += '<span class="ellipsis" aria-hidden="true">…</span>';
+   }
+   html += `<button type="button" data-page="${page}" class="${page===currentPage?'active':''}" ${page===currentPage?'aria-current="page"':''}>${page}</button>`;
+   previous = page;
+ }
+ html+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button>`;
+ html+=`<div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;
+ pagination.innerHTML=html;
+}
+async function search(){
+ clear();
+ $('rows').innerHTML='<tr><td colspan="8" class="empty">Mencari...</td></tr>';
+ $('pagination').innerHTML='';
+ const r=await api('search',{q:$('q').value.trim()});
+ if(!r.success)throw Error(r.message);
+ records=r.records||[];
+ currentPage=1;
+ renderPage();
+ updateSummary();
+ if((r.total||0)>records.length){
+   $('count').textContent+=` Backend memulangkan ${records.length} daripada ${r.total} rekod; had API perlu dinaikkan untuk memaparkan selebihnya.`;
+ }
+}
+function open(modeNew,r){mode=modeNew;clear('formStatus');$('form').reset();$('row').value=r?r.row:'';$('modalTitle').textContent=r?'Edit Kenderaan':'Tambah Kenderaan';$('unit').disabled=!!r;if(r){$('unit').value=r.unit;$('category').value=r.category;$('type').value=r.vehicleType;$('plate').value=r.plate;}else{$('category').value='Utama';$('type').value='Kereta';}$('modal').classList.add('show');}
+function close(){ $('modal').classList.remove('show');}
+async function submit(e){e.preventDefault();clear('formStatus');const p={unit:$('unit').value,category:$('category').value,vehicleType:$('type').value,plate:$('plate').value.trim()};if(mode==='edit')p.row=$('row').value;$('save').disabled=true;try{const r=await api(mode==='edit'?'update':'add',p);if(!r.success)throw Error(r.message);close();message(r.message);await loadUnits();await search();}catch(err){message(err.message,'error','formStatus')}finally{$('save').disabled=false;}}
+async function del(row){const r=records.find(x=>Number(x.row)===Number(row));if(!r||!confirm(`Padam ${r.plate} untuk ${r.unit}?`))return;try{const x=await api('delete',{row});if(!x.success)throw Error(x.message);message(x.message);await loadUnits();await search();}catch(e){message(e.message,'error')}}
+$('searchForm').onsubmit=e=>{e.preventDefault();search().catch(err=>message(err.message,'error'));};$('reset').onclick=()=>{$('q').value='';$('whatsappPanel').style.display='none';$('whatsappSummary').value='';$('summaryStatus').textContent='';search().catch(e=>message(e.message,'error'));};$('copySummary').onclick=async()=>{try{await navigator.clipboard.writeText($('whatsappSummary').value);$('summaryStatus').textContent='Ringkasan berjaya disalin. Boleh paste ke WhatsApp.';$('summaryStatus').className='status-message success';}catch(e){$('whatsappSummary').focus();$('whatsappSummary').select();$('summaryStatus').textContent='Clipboard tidak dapat diakses. Teks telah dipilih; tekan Ctrl+C untuk salin.';$('summaryStatus').className='status-message error';}};$('add').onclick=()=>open('add');$('close').onclick=close;$('cancel').onclick=close;$('modal').onclick=e=>{if(e.target===$('modal'))close();};$('form').onsubmit=submit;
+$('pagination').onclick=e=>{const button=e.target.closest('[data-page]');if(!button||button.disabled)return;const page=Number(button.dataset.page);if(!Number.isInteger(page)||page<1||page>Math.ceil(records.length/PAGE_SIZE))return;currentPage=page;renderPage();};
+$('rows').onclick=e=>{const a=e.target.closest('[data-edit]'),d=e.target.closest('[data-del]');if(a){const r=records.find(x=>Number(x.row)===Number(a.dataset.edit));if(r)open('edit',r);}if(d)del(d.dataset.del);};
+$('logout').onclick=async()=>{try{await jsonp(LOGIN_API_URL,{action:'api',task:'logout'});}catch(e){}sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);};
+(async()=>{try{if(!API_URL||API_URL.startsWith('GANTIKAN_'))throw Error('Tetapkan API_URL deployment backend kenderaan.');const s=await loginCheck();if(!s.success||!s.user){sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);return;}message('Sesi sah. Memuatkan data kenderaan...');await loadUnits();await search();}catch(e){message(e.message,'error');$('count').textContent='Gagal memuatkan data';$('rows').innerHTML='<tr><td colspan="8" class="empty">'+esc(e.message)+'</td></tr>';}})();
+})();
+</script></body></html>

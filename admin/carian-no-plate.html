@@ -1,0 +1,752 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102d4d">
+    <title>Carian No. Plat | Alam Idaman</title>
+
+    <style>
+        :root {
+            --navy: #102d4d;
+            --blue: #245a91;
+            --green: #187044;
+            --text: #1c2d40;
+            --muted: #65758a;
+            --background: #f3f6fa;
+            --border: #e1e8f0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background: var(--background);
+        }
+
+        a { text-decoration: none; }
+
+        /* HEADER SAMA SEPERTI DASHBOARD */
+        .header {
+            background: var(--navy);
+            color: white;
+        }
+
+        .header-inner {
+            max-width: 1120px;
+            margin: auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 66px;
+            height: 66px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .brand h1 {
+            font-size: 23px;
+            margin: 0 0 5px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            margin: 0;
+            color: #d6e4f2;
+            font-size: 13px;
+            letter-spacing: .5px;
+        }
+
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 15px;
+            border: 1px solid rgba(255,255,255,.55);
+            border-radius: 10px;
+            color: white;
+            background: rgba(255,255,255,.10);
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,.20);
+        }
+
+        /* BANNER SAMA SEPERTI DASHBOARD */
+        .banner {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            background: #183c60;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(
+                90deg,
+                rgba(8,29,52,.76),
+                rgba(8,29,52,.22)
+            );
+        }
+
+        .banner-content {
+            color: white;
+            max-width: 760px;
+        }
+
+        .banner-content h2 {
+            font-size: clamp(28px,4vw,43px);
+            margin: 0 0 14px;
+            line-height: 1.2;
+        }
+
+        .banner-content p {
+            font-size: 16px;
+            line-height: 1.7;
+            margin: 0;
+            color: #f0f5fb;
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 38px 24px 44px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 10px;
+            font-size: 27px;
+            color: var(--navy);
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* SEARCH */
+        .search-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 26px rgba(16,45,77,.05);
+        }
+
+        .search-label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            min-width: 0;
+            flex: 1;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 16px;
+            text-transform: uppercase;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(36,90,145,.12);
+        }
+
+        button {
+            border: 0;
+            border-radius: 9px;
+            padding: 13px 24px;
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover { filter: brightness(1.08); }
+
+        button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .search-note {
+            margin: 12px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* RESULTS */
+        .results-panel {
+            margin-top: 22px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 26px rgba(16,45,77,.04);
+        }
+
+        .results-heading {
+            margin: 0 0 12px;
+            color: var(--navy);
+            font-size: 19px;
+        }
+
+        #status {
+            margin: 12px 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .record {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin: 14px 0;
+            overflow: hidden;
+        }
+
+        .record-title {
+            background: #eaf2fa;
+            color: var(--navy);
+            padding: 14px 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .record-type {
+            background: white;
+            color: var(--blue);
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .record-body { padding: 8px 16px; }
+
+        .field {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .field:last-child { border-bottom: 0; }
+
+        .label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .value {
+            text-align: right;
+            font-weight: 600;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .empty {
+            color: var(--muted);
+            text-align: center;
+            padding: 28px 10px;
+            line-height: 1.7;
+        }
+
+        .error {
+            color: #9b1c1c !important;
+        }
+
+        /* FOOTER SAMA SEPERTI DASHBOARD */
+        .footer {
+            background: var(--navy);
+            color: #d5e2ef;
+            text-align: center;
+            padding: 23px 18px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .footer strong { color: white; }
+
+        /* MOBILE */
+        @media (max-width: 800px) {
+            .header-inner {
+                flex-wrap: wrap;
+            }
+
+            .header-actions {
+                margin-left: auto;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .header-inner {
+                padding: 15px 16px;
+                gap: 12px;
+            }
+
+            .logo {
+                width: 54px;
+                height: 54px;
+            }
+
+            .brand h1 { font-size: 19px; }
+
+            .brand p {
+                font-size: 10px;
+                line-height: 1.5;
+            }
+
+            .header-actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .header-btn {
+                flex: 1;
+                padding: 10px 8px;
+                font-size: 11px;
+            }
+
+            .banner { height: 230px; }
+
+            .banner-content h2 { font-size: 29px; }
+
+            .banner-content p { font-size: 14px; }
+
+            .container { padding: 30px 14px; }
+
+            .section-heading h2 { font-size: 23px; }
+
+            .search-panel,
+            .results-panel {
+                padding: 18px;
+            }
+
+            .search-box { flex-direction: column; }
+
+            .search-box button { width: 100%; }
+
+            .field {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .value { text-align: left; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-inner">
+            <img src="../logo.png" alt="Logo Alam Idaman" class="logo">
+
+            <div class="brand">
+                <h1>ALAM IDAMAN</h1>
+                <p>PORTAL PENDAFTARAN PELAWAT</p>
+            </div>
+
+            <div class="header-actions">
+                <a class="header-btn" href="dashboard.html">
+                    ← DASHBOARD
+                </a>
+                <button class="header-btn" id="logout" type="button">
+                    🔐 LOG KELUAR
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER -->
+    <section class="banner">
+        <img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman">
+
+        <div class="banner-overlay">
+            <div class="banner-content">
+                <h2>Carian No. Plat</h2>
+                <p>
+                    Semakan rekod nombor pendaftaran kenderaan
+                    dalam sistem Alam Idaman.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="container">
+
+        <div class="section-heading">
+            <h2>Carian Nombor Pendaftaran</h2>
+            <p>Masukkan nombor plat untuk mencari rekod berkaitan.</p>
+        </div>
+
+        <section class="search-panel">
+            <form class="search-box" id="searchForm">
+                <input
+                    id="plateInput"
+                    type="text"
+                    placeholder="Contoh: VAB1234"
+                    autocomplete="off"
+                    aria-label="Nombor plat kenderaan"
+                    required
+                >
+                <button id="searchButton" type="submit" disabled>
+                    CARI
+                </button>
+            </form>
+
+            <p class="search-note">
+                Carian tidak membezakan huruf besar atau kecil.
+                Jarak dan simbol pada nombor plat akan diabaikan.
+            </p>
+        </section>
+
+        <section class="results-panel">
+            <h3 class="results-heading">Keputusan Carian</h3>
+            <div id="status" role="status" aria-live="polite">
+                Sedang mengesahkan sesi login...
+            </div>
+            <div id="resultsList"></div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <strong>ALAM IDAMAN</strong><br>
+        Visitor Management System (VMS)<br>
+        Sila pastikan semua maklumat pendaftaran adalah tepat.
+    </footer>
+
+    <script>
+        
+        // API untuk carian nombor plat
+        const SEARCH_API_URL = 'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+
+        // Backend login PPAI
+        const LOGIN_API_URL = 'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+
+        const LOGIN_URL = 'https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+
+        const TOKEN_KEY = 'PPAI_SESSION_TOKEN';
+
+        const form = document.getElementById('searchForm');
+        const input = document.getElementById('plateInput');
+        const button = document.getElementById('searchButton');
+        const statusBox = document.getElementById('status');
+        const resultsList = document.getElementById('resultsList');
+
+        let sessionValid = false;
+
+        function normalizePlate(value) {
+            return value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        }
+
+        // JSONP digunakan untuk mengelakkan isu CORS
+        function jsonpRequest(baseUrl, params, timeoutMs = 15000) {
+            return new Promise(function (resolve, reject) {
+                const callbackName =
+                    'ppaiCb_' + Date.now() + '_' +
+                    Math.random().toString(36).slice(2);
+
+                const script = document.createElement('script');
+                const url = new URL(baseUrl);
+
+                Object.entries(params).forEach(function ([key, value]) {
+                    url.searchParams.set(key, value);
+                });
+
+                url.searchParams.set('callback', callbackName);
+
+                let finished = false;
+
+                const timer = setTimeout(function () {
+                    finish(new Error('Sambungan tamat masa. Sila cuba lagi.'));
+                }, timeoutMs);
+
+                function finish(error, data) {
+                    if (finished) return;
+
+                    finished = true;
+                    clearTimeout(timer);
+                    delete window[callbackName];
+                    script.remove();
+
+                    if (error) reject(error);
+                    else resolve(data);
+                }
+
+                window[callbackName] = function (data) {
+                    finish(null, data);
+                };
+
+                script.onerror = function () {
+                    finish(new Error('Backend tidak dapat dihubungi. Semak URL API.'));
+                };
+
+                url.searchParams.set('callback', callbackName);
+                script.src = url.toString();
+                document.body.appendChild(script);
+            });
+        }
+
+        function redirectToLogin(message) {
+            sessionValid = false;
+            sessionStorage.removeItem(TOKEN_KEY);
+
+            if (message) {
+                sessionStorage.setItem('PPAI_LOGIN_NOTICE', message);
+            }
+
+            window.location.replace(LOGIN_URL);
+        }
+
+        async function checkLoginSession() {
+            const token = sessionStorage.getItem(TOKEN_KEY);
+
+            if (!token) {
+                redirectToLogin('Sila log masuk untuk meneruskan.');
+                return false;
+            }
+
+            try {
+                const result = await jsonpRequest(LOGIN_API_URL, {
+                    action: 'api',
+                    task: 'me',
+                    token: token
+                });
+
+                if (!result.success || !result.user) {
+                    redirectToLogin('Sesi login telah tamat. Sila log masuk semula.');
+                    return false;
+                }
+
+                sessionValid = true;
+                button.disabled = false;
+                statusBox.textContent =
+                    'Sesi disahkan. Masukkan nombor plat untuk membuat carian.';
+
+                return true;
+
+            } catch (error) {
+                statusBox.textContent =
+                    'Tidak dapat mengesahkan sesi login. Sila muat semula halaman.';
+                statusBox.classList.add('error');
+                return false;
+            }
+        }
+
+        function addField(container, label, value) {
+            const row = document.createElement('div');
+            row.className = 'field';
+
+            const labelElement = document.createElement('div');
+            labelElement.className = 'label';
+            labelElement.textContent = label;
+
+            const valueElement = document.createElement('div');
+            valueElement.className = 'value';
+            valueElement.textContent = value || '—';
+
+            row.append(labelElement, valueElement);
+            container.appendChild(row);
+        }
+
+        function showRecords(records) {
+            resultsList.replaceChildren();
+
+            records.forEach(function (record) {
+                const card = document.createElement('article');
+                card.className = 'record';
+
+                const title = document.createElement('div');
+                title.className = 'record-title';
+
+                const plateTitle = document.createElement('span');
+                plateTitle.textContent = record.plate || 'No. Plat';
+
+                const type = document.createElement('span');
+                type.className = 'record-type';
+                type.textContent = record.recordType || 'Rekod';
+
+                title.append(plateTitle, type);
+
+                const body = document.createElement('div');
+                body.className = 'record-body';
+
+                addField(body, 'Unit Rumah', record.unit);
+
+                if (record.recordType === 'Pelawat Biasa') {
+                    addField(body, 'Nama Pelawat', record.visitorName);
+                }
+
+                addField(body, 'Nama Owner', record.ownerName);
+                addField(body, 'Phone Owner', record.ownerPhone);
+                addField(body, 'No. Plate', record.plate);
+                addField(body, 'Jenis Kenderaan', record.vehicleType);
+
+                if (record.recordType !== 'Kenderaan Berdaftar') {
+                    addField(body, 'Scan Terakhir', record.lastScan);
+                }
+
+                card.append(title, body);
+                resultsList.appendChild(card);
+            });
+        }
+
+        async function searchPlate(plate) {
+            return jsonpRequest(SEARCH_API_URL, {
+                action: 'searchPlate',
+                plate: plate
+            }, 20000);
+        }
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (!sessionValid) {
+                statusBox.textContent =
+                    'Sesi belum disahkan. Sila muat semula halaman.';
+                return;
+            }
+
+            const plate = normalizePlate(input.value);
+
+            if (!plate) {
+                statusBox.textContent = 'Sila masukkan nombor plat.';
+                return;
+            }
+
+            button.disabled = true;
+            statusBox.classList.remove('error');
+            statusBox.textContent = 'Sedang mencari...';
+            resultsList.replaceChildren();
+
+            try {
+                const data = await searchPlate(plate);
+
+                if (!data || !data.success) {
+                    throw new Error(
+                        data && data.message
+                            ? data.message
+                            : 'Carian gagal.'
+                    );
+                }
+
+                const records = Array.isArray(data.records)
+                    ? data.records
+                    : [];
+
+                statusBox.textContent =
+                    data.message || 'Carian selesai.';
+
+                if (records.length > 0) {
+                    showRecords(records);
+                } else {
+                    const empty = document.createElement('div');
+                    empty.className = 'empty';
+                    empty.textContent =
+                        'Tiada rekod untuk nombor plat ini.';
+                    resultsList.appendChild(empty);
+                }
+
+            } catch (error) {
+                statusBox.textContent = error.message;
+                statusBox.classList.add('error');
+            } finally {
+                button.disabled = !sessionValid;
+            }
+        });
+
+        document.getElementById('logout').addEventListener(
+            'click',
+            async function () {
+                const token = sessionStorage.getItem(TOKEN_KEY);
+
+                sessionStorage.removeItem(TOKEN_KEY);
+                sessionValid = false;
+                button.disabled = true;
+
+                if (token) {
+                    try {
+                        await jsonpRequest(LOGIN_API_URL, {
+                            action: 'api',
+                            task: 'logout',
+                            token: token
+                        }, 5000);
+                    } catch (error) {
+                        // Token setempat telah dipadam.
+                    }
+                }
+
+                window.location.replace(LOGIN_URL);
+            }
+        );
+
+        checkLoginSession();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102d4d">
+<title>Senarai Pelawat | Alam Idaman</title>
+<style>
+:root{--navy:#102d4d;--blue:#245a91;--green:#187044;--red:#b42318;--text:#1c2d40;--muted:#65758a;--background:#f3f6fa;--border:#e1e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--background)}a{text-decoration:none}
+.header{background:var(--navy);color:white}.header-inner{max-width:1120px;margin:auto;padding:18px 24px;display:flex;align-items:center;gap:16px}
+.logo{width:66px;height:66px;object-fit:contain;background:white;padding:5px;border-radius:12px;flex-shrink:0}.brand h1{font-size:23px;margin:0 0 5px;letter-spacing:1px}.brand p{margin:0;color:#d6e4f2;font-size:13px;letter-spacing:.5px}
+.header-actions{margin-left:auto;display:flex;gap:10px}.header-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border:1px solid rgba(255,255,255,.55);border-radius:10px;color:white;background:rgba(255,255,255,.1);font-size:12px;font-weight:bold;cursor:pointer;white-space:nowrap;gap:6px}
+.banner{position:relative;height:260px;overflow:hidden;background:#183c60}.banner img{width:100%;height:100%;object-fit:cover;display:block}.banner-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(90deg,rgba(8,29,52,.76),rgba(8,29,52,.22))}.banner-content{color:white;max-width:760px}.banner-content h2{font-size:clamp(28px,4vw,43px);margin:0 0 12px}.banner-content p{font-size:15px;line-height:1.7;margin:0}
+.container{max-width:1120px;margin:auto;padding:35px 24px 45px}.section-heading{text-align:center;margin-bottom:25px}.section-heading h2{color:var(--navy);font-size:27px;margin:0 0 10px}.section-heading p{color:var(--muted);margin:0;line-height:1.6}
+.panel{background:white;border:1px solid var(--border);border-radius:15px;padding:22px;margin-bottom:22px;box-shadow:0 8px 26px rgba(16,45,77,.04)}.panel h3{color:var(--navy);margin:0 0 17px;font-size:19px}
+.filter-grid{display:grid;grid-template-columns: minmax(140px,.7fr) minmax(170px,1fr) minmax(170px,1fr) auto auto;gap:10px;align-items:end}
+.form-group label{display:block;margin-bottom:7px;font-size:13px;font-weight:bold;color:var(--navy)}
+input,select{width:100%;min-width:0;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:var(--text);font-size:14px}
+button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.btn-green{background:var(--green)}.btn-light{background:#e8eef5;color:var(--navy)}
+.status-message{margin-top:14px;font-size:13px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}.status-message.error{color:var(--red)}.status-message.success{color:var(--green)}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:13px 12px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:middle}th{color:var(--navy);background:#f5f8fc;white-space:nowrap}td{overflow-wrap:anywhere}.unit{font-weight:bold;color:var(--navy);white-space:nowrap}.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap}.status-valid{background:#e2f5e9;color:#187044}.status-rejected{background:#fde5e5;color:#c62828}.status-unknown{background:#edf2f7;color:#64748b}
+.empty{padding:24px 10px;text-align:center;color:var(--muted);line-height:1.7}
+.pagination{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:18px}.pagination button{min-width:38px;min-height:36px;padding:8px 11px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:var(--navy);font-size:12px}.pagination button.active{background:var(--blue);border-color:var(--blue);color:#fff}.pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination .ellipsis{display:inline-flex;align-items:center;justify-content:center;min-width:20px;color:var(--muted);font-size:14px}.pagination-info{width:100%;margin-top:3px;text-align:center;color:var(--muted);font-size:12px}
+.footer{background:var(--navy);color:#d5e2ef;text-align:center;padding:23px 18px;font-size:12px;line-height:1.8}.footer strong{color:white}
+@media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-grid button{width:100%}}
+@media(max-width:760px){.header-inner{flex-wrap:wrap;padding:15px 16px}.logo{width:54px;height:54px}.brand h1{font-size:19px}.brand p{font-size:10px}.header-actions{width:100%;margin-left:0}.header-btn{flex:1}.banner{height:220px}.container{padding:27px 13px 35px}.section-heading h2{font-size:23px}.panel{padding:16px}.filter-grid{grid-template-columns:1fr}.table-wrap table{min-width:1080px}.pagination{gap:5px}.pagination button{min-width:34px;min-height:34px;padding:7px 9px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="header-inner">
+<img src="../logo.png" alt="Logo Alam Idaman" class="logo">
+<div class="brand"><h1>ALAM IDAMAN</h1><p>PORTAL PENDAFTARAN PELAWAT</p></div>
+<div class="header-actions"><a class="header-btn" href="dashboard.html">← DASHBOARD</a><button class="header-btn" id="logout" type="button">🔐 LOG KELUAR</button></div>
+</div></header>
+<section class="banner"><img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman"><div class="banner-overlay"><div class="banner-content"><h2>Senarai Pelawat</h2><p>Semakan rekod pelawat Alam Idaman mengikut hari dan bulan.</p></div></div></section>
+<main class="container">
+<div class="section-heading"><h2>Rekod Pelawat</h2><p>Pilih paparan harian atau bulanan untuk menyemak rekod lawatan.</p></div>
+<section class="panel"><h3>🔎 Penapis Senarai Pelawat</h3>
+<form id="filterForm" class="filter-grid">
+<div class="form-group"><label for="period">Paparan</label><select id="period"><option value="daily">Harian</option><option value="monthly">Bulanan</option></select></div>
+<div class="form-group" id="dateGroup"><label for="visitDate">Tarikh</label><input id="visitDate" type="date" required></div>
+<div class="form-group" id="monthGroup" style="display:none"><label for="visitMonth">Bulan</label><input id="visitMonth" type="month"></div>
+<div class="form-group"><label for="q">Carian (Unit / No Plate)</label><input id="q" type="search" placeholder="Contoh: B-00-00 / ABC1234" autocomplete="off"></div>
+<button id="search" type="submit">CARI</button><button id="reset" type="button" class="btn-light">RESET</button>
+</form><div id="status" class="status-message">Sedang mengesahkan sesi login...</div></section>
+<section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 style="margin:0">Senarai Rekod Pelawat</h3><span id="periodLabel" class="status-message" style="margin:0"></span></div>
+<div class="table-wrap"><table><thead><tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr></thead><tbody id="rows"><tr><td colspan="10" class="empty">Pilih tarikh atau bulan untuk memuatkan rekod.</td></tr></tbody></table></div>
+<div id="pagination" class="pagination" aria-label="Navigasi halaman rekod"></div><div id="count" class="status-message"></div></section>
+</main>
+<footer class="footer"><strong>ALAM IDAMAN</strong><br>Visitor Management System (VMS)<br>Senarai rekod pelawat untuk rujukan pengurusan.</footer>
+<script>
+(() => {
+const API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+const LOGIN_API_URL=API_URL, LOGIN_URL='https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+const TOKEN_KEY='PPAI_SESSION_TOKEN', token=sessionStorage.getItem(TOKEN_KEY), $=id=>document.getElementById(id);
+let records=[],currentPage=1;const PAGE_SIZE=10;
+if(!token){location.replace(LOGIN_URL);return;}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function jsonp(baseUrl,params={}){return new Promise((resolve,reject)=>{const cb='ppaiCb'+Date.now()+Math.floor(Math.random()*10000),script=document.createElement('script');let settled=false;const timer=setTimeout(()=>{cleanup();reject(Error('API tidak memberi respons. Sila semak deployment Apps Script.'));},20000);function cleanup(){if(settled)return;settled=true;clearTimeout(timer);delete window[cb];script.remove();}window[cb]=data=>{cleanup();resolve(data)};script.onerror=()=>{cleanup();reject(Error('Gagal menghubungi API. Semak URL Web App dan akses deployment.'));};const url=new URL(baseUrl);Object.entries({...params,token,callback:cb}).forEach(([k,v])=>url.searchParams.set(k,String(v??'')));script.src=url.toString();document.head.appendChild(script);});}
+function api(task,p={}){return jsonp(API_URL+'?'+new URLSearchParams({action:'visitor',task,...p}));}
+function message(msg,type='success'){$('status').textContent=msg;$('status').className='status-message'+(type==='error'?' error':' success');}
+function dateLocal(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function setFilterFields(){const monthly=$('period').value==='monthly';$('dateGroup').style.display=monthly?'none':'block';$('monthGroup').style.display=monthly?'block':'none';$('visitDate').required=!monthly;$('visitMonth').required=monthly;}
+function render(){const total=records.length,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));currentPage=Math.min(currentPage,totalPages);const start=(currentPage-1)*PAGE_SIZE,items=records.slice(start,start+PAGE_SIZE);
+$('rows').innerHTML=items.length?items.map(r=>{const status=String(r.status||'').trim().toUpperCase();const statusClass=status==='VALID'?'status-valid':status==='REJECTED'?'status-rejected':'status-unknown';return `<tr><td class="unit">${esc(r.unit)}</td><td><b>${esc(r.plate)}</b></td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td>${esc(r.checkIn||'—')}</td><td>${esc(r.purpose)}</td><td>${esc(r.duration)}</td><td>${esc(r.registerDate)}</td><td>${esc(r.lastScan||'—')}</td><td><b>${esc(r.count??0)}</b></td><td>${esc(r.registrarEmail)}</td></tr>`;}).join(''):'<tr><td colspan="10" class="empty">Tiada rekod pelawat ditemui bagi pilihan ini.</td></tr>';
+$('count').textContent=total?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod.`:'0 rekod ditemui';
+const pag=$('pagination');if(totalPages<=1){pag.innerHTML='';return;}let out=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;const pages=new Set([1,totalPages]);for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);let prev=0;for(const p of [...pages].sort((a,b)=>a-b)){if(prev&&p-prev>1)out+='<span class="ellipsis">…</span>';out+=`<button type="button" data-page="${p}" class="${p===currentPage?'active':''}" ${p===currentPage?'aria-current="page"':''}>${p}</button>`;prev=p;}out+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button><div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;pag.innerHTML=out;}
+async function search(){message('Sedang mendapatkan rekod pelawat...');$('rows').innerHTML='<tr><td colspan="10" class="empty">Memuatkan rekod...</td></tr>';$('pagination').innerHTML='';const p={period:$('period').value,q:$('q').value.trim()};if(p.period==='daily')p.date=$('visitDate').value;else p.month=$('visitMonth').value;
+const result=await api('search',p);if(!result.success)throw Error(result.message||'Carian rekod gagal.');records=result.records||[];currentPage=1;$('periodLabel').textContent=p.period==='daily'?'Tarikh: '+p.date:'Bulan: '+p.month;render();message('Carian selesai. '+records.length+' rekod ditemui.');}
+async function loginCheck(){return jsonp(LOGIN_API_URL,{action:'api',task:'me'});}
+$('period').onchange=setFilterFields;$('filterForm').onsubmit=e=>{e.preventDefault();search().catch(e=>message(e.message,'error'));};
+$('reset').onclick=()=>{$('q').value='';$('period').value='daily';$('visitDate').value=dateLocal();$('visitMonth').value=dateLocal().slice(0,7);setFilterFields();search().catch(e=>message(e.message,'error'));};
+$('pagination').onclick=e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const p=Number(b.dataset.page);if(p<1||p>Math.ceil(records.length/PAGE_SIZE))return;currentPage=p;render();};
+$('logout').onclick=async()=>{try{await jsonp(LOGIN_API_URL,{action:'api',task:'logout'});}catch(e){}sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);};
+(async()=>{try{$('visitDate').value=dateLocal();$('visitMonth').value=dateLocal().slice(0,7);setFilterFields();const s=await loginCheck();if(!s.success||!s.user){sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);return;}await search();}catch(e){message(e.message,'error');}})();
+})();
+</script>
+</body></html>

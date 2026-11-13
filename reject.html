@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Alam Idaman - Reject Visitor</title>
+
+	<style>
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 16px;
+			font-family: Arial, sans-serif;
+			background: #f5f6f8;
+			color: #222;
+		}
+
+		.container {
+			width: 100%;
+			max-width: 520px;
+			margin: 0 auto;
+		}
+
+		.card {
+			background: #fff;
+			padding: 18px;
+			margin-bottom: 15px;
+			border-radius: 14px;
+			box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+		}
+
+		.header {
+			text-align: center;
+			padding: 20px 18px;
+		}
+
+		.logo {
+			display: block;
+			width: 95px;
+			height: 95px;
+			object-fit: contain;
+			margin: 0 auto 12px;
+		}
+
+		.title {
+			margin: 0;
+			font-size: 25px;
+			font-weight: bold;
+		}
+
+		.subtitle {
+			margin-top: 6px;
+			color: #666;
+			font-size: 15px;
+		}
+
+		.section-title {
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 15px;
+		}
+
+		.status {
+			padding: 12px;
+			margin-bottom: 15px;
+			border-radius: 8px;
+			text-align: center;
+			font-size: 20px;
+			font-weight: bold;
+		}
+
+		.status-valid {
+			background: #d9ead3;
+			color: #137333;
+		}
+
+		.status-expired,
+		.status-rejected {
+			background: #fce8e6;
+			color: #c5221f;
+		}
+
+		.detail-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 15px;
+			padding: 10px 0;
+			border-bottom: 1px solid #eee;
+		}
+
+		.detail-label {
+			color: #666;
+			flex: 0 0 42%;
+		}
+
+		.detail-value {
+			font-weight: bold;
+			text-align: right;
+			word-break: break-word;
+		}
+
+		.message {
+			padding: 12px;
+			margin-top: 12px;
+			border-radius: 8px;
+			text-align: center;
+			background: #f1f3f4;
+			font-size: 14px;
+			line-height: 1.5;
+		}
+
+		.success {
+			background: #d9ead3;
+			color: #137333;
+		}
+
+		.error {
+			background: #fce8e6;
+			color: #c5221f;
+		}
+
+		.warning {
+			background: #fff3cd;
+			color: #856404;
+		}
+
+		button {
+			width: 100%;
+			padding: 14px;
+			margin-top: 10px;
+			border: 0;
+			border-radius: 8px;
+			background: #d93025;
+			color: #fff;
+			font-size: 16px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		button:disabled {
+			background: #aaa;
+			cursor: not-allowed;
+		}
+
+		.hidden {
+			display: none !important;
+		}
+
+		.small-note {
+			margin-top: 10px;
+			text-align: center;
+			color: #777;
+			font-size: 12px;
+			line-height: 1.5;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<div class="container">
+
+		<!-- HEADER -->
+		<div class="card header">
+			<img src="logo.png" alt="Alam Idaman" class="logo">
+			<div class="subtitle">Visitor Management</div>
+		</div>
+
+		<!-- VISITOR RESULT -->
+		<div id="visitorResult" class="card hidden">
+
+			<div class="section-title">Visitor Information</div>
+
+			<div id="visitorStatus" class="status">-</div>
+			<div id="visitorStatusMessage" class="message hidden"></div>
+
+			<div class="detail-row">
+				<div class="detail-label">Visitor ID</div>
+				<div id="detailVisitorId" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Unit Rumah</div>
+				<div id="detailUnit" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Nama Penduduk</div>
+				<div id="detailResident" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">No. Telefon</div>
+				<div id="detailPhone" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Jenis Pelawat</div>
+				<div id="detailVisitorType" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Nama Pelawat</div>
+				<div id="detailVisitorName" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">No. Plat</div>
+				<div id="detailPlate" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Jenis Kenderaan</div>
+				<div id="detailVehicle" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Tujuan Lawatan</div>
+				<div id="detailPurpose" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Valid From</div>
+				<div id="detailValidFrom" class="detail-value">-</div>
+			</div>
+
+			<div class="detail-row">
+				<div class="detail-label">Valid Until</div>
+				<div id="detailValidUntil" class="detail-value">-</div>
+			</div>
+
+			<button id="rejectBtn" type="button" onclick="rejectVisitor()">REJECT VISITOR</button>
+
+		</div>
+
+		<!-- GLOBAL MESSAGE -->
+		<div id="globalMessage" class="message hidden"></div>
+
+		<div class="small-note">Alam Idaman Visitor Management System</div>
+
+	</div>
+
+	<script>
+
+		/* =========================================================
+		   API CONFIG
+		========================================================= */
+
+		const API_URL = 'https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
+
+		let currentVisitor = null;
+		let visitorId = '';
+
+
+		/* =========================================================
+		   PAGE LOAD
+		========================================================= */
+
+		window.addEventListener('load', function() {
+			loadVisitor();
+		});
+
+
+		/* =========================================================
+		   LOAD VISITOR
+		========================================================= */
+
+		function loadVisitor() {
+			const params = new URLSearchParams(window.location.search);
+
+			visitorId = (params.get('visitorId') || '').trim().toUpperCase();
+
+			if (!visitorId) {
+				showGlobalMessage('Visitor ID tidak dijumpai dalam link.', 'error');
+				return;
+			}
+
+			loadVisitorApi();
+		}
+
+
+		/* =========================================================
+		   GET VISITOR
+		========================================================= */
+
+		function loadVisitorApi() {
+			const callbackName = 'visitorCallback_' + Date.now();
+
+			window[callbackName] = function(response) {
+				try {
+					if (!response || !response.success || !response.visitor) {
+						showGlobalMessage(response && response.message ? response.message : 'Visitor tidak dijumpai.', 'error');
+						return;
+					}
+
+					currentVisitor = response.visitor;
+					displayVisitor(currentVisitor);
+				}
+				finally {
+					delete window[callbackName];
+
+					const script = document.getElementById(callbackName);
+					if (script) script.remove();
+				}
+			};
+
+			loadApi('visitor', { visitorId: visitorId }, callbackName);
+		}
+
+
+		/* =========================================================
+		   DISPLAY VISITOR
+		========================================================= */
+
+		function displayVisitor(visitor) {
+			document.getElementById('visitorResult').classList.remove('hidden');
+
+			document.getElementById('detailVisitorId').textContent = visitor.visitorId || '-';
+			document.getElementById('detailUnit').textContent = visitor.unit || '-';
+			document.getElementById('detailResident').textContent = visitor.residentName || '-';
+			document.getElementById('detailPhone').textContent = visitor.phone || '-';
+			document.getElementById('detailVisitorType').textContent = visitor.actualVisitorType || visitor.visitorType || '-';
+			document.getElementById('detailVisitorName').textContent = visitor.visitorName || '-';
+			document.getElementById('detailPlate').textContent = visitor.plate || '-';
+			document.getElementById('detailVehicle').textContent = visitor.vehicleType || '-';
+			document.getElementById('detailPurpose').textContent = visitor.purpose || '-';
+			document.getElementById('detailValidFrom').textContent = visitor.validFrom || '-';
+			document.getElementById('detailValidUntil').textContent = visitor.validUntil || '-';
+
+			const status = document.getElementById('visitorStatus');
+			const statusMessage = document.getElementById('visitorStatusMessage');
+			const rejectBtn = document.getElementById('rejectBtn');
+
+			status.className = 'status';
+			statusMessage.className = 'message hidden';
+			statusMessage.textContent = '';
+			rejectBtn.disabled = false;
+			rejectBtn.classList.remove('hidden');
+
+			if (visitor.status === 'REJECTED') {
+				status.classList.add('status-rejected');
+				status.textContent = 'REJECTED';
+				statusMessage.textContent = 'Pelawat ini telah ditolak oleh tuan rumah.';
+				statusMessage.classList.add('error');
+				statusMessage.classList.remove('hidden');
+				rejectBtn.disabled = true;
+				rejectBtn.textContent = 'VISITOR REJECTED';
+			}
+			else if (visitor.status === 'EXPIRED') {
+				status.classList.add('status-expired');
+				status.textContent = 'EXPIRED';
+				statusMessage.textContent = 'QR Code ini telah tamat tempoh. Sila minta tuan rumah membuat pendaftaran pelawat baharu.';
+				statusMessage.classList.add('error');
+				statusMessage.classList.remove('hidden');
+				rejectBtn.disabled = true;
+				rejectBtn.textContent = 'QR CODE EXPIRED';
+			}
+			else {
+				status.classList.add('status-valid');
+				status.textContent = 'VALID';
+				statusMessage.textContent = 'Pelawat ini masih aktif dan boleh ditolak oleh tuan rumah.';
+				statusMessage.classList.add('warning');
+				statusMessage.classList.remove('hidden');
+				rejectBtn.textContent = 'REJECT VISITOR';
+			}
+		}
+
+
+		/* =========================================================
+		   REJECT VISITOR
+		========================================================= */
+
+		function rejectVisitor() {
+			if (!currentVisitor || !currentVisitor.visitorId) {
+				showGlobalMessage('Visitor tidak dijumpai.', 'error');
+				return;
+			}
+
+			if (currentVisitor.status === 'REJECTED') {
+				showGlobalMessage('Visitor ini sudah ditolak.', 'warning');
+				return;
+			}
+
+			if (currentVisitor.status === 'EXPIRED') {
+				showGlobalMessage('QR Code ini telah tamat tempoh.', 'error');
+				return;
+			}
+
+			const confirmed = window.confirm('Adakah anda pasti mahu REJECT visitor ini?');
+
+			if (!confirmed) return;
+
+			const button = document.getElementById('rejectBtn');
+			button.disabled = true;
+			button.textContent = 'PROCESSING...';
+
+			const callbackName = 'rejectCallback_' + Date.now();
+
+			window[callbackName] = function(response) {
+				try {
+					if (response && response.success) {
+					    currentVisitor.status = 'REJECTED';
+					    displayVisitor(currentVisitor);
+					
+					    showGlobalMessage(
+					        response.message || 'Pelawat berjaya ditolak.',
+					        response.emailSent === false ? 'warning' : 'success'
+					    );
+					}
+					else {
+						button.disabled = false;
+						button.textContent = 'REJECT VISITOR';
+						showGlobalMessage(response && response.message ? response.message : 'Reject visitor gagal.', 'error');
+					}
+				}
+				finally {
+					delete window[callbackName];
+
+					const script = document.getElementById(callbackName);
+					if (script) script.remove();
+				}
+			};
+
+			loadApi('reject', { visitorId: currentVisitor.visitorId }, callbackName);
+		}
+
+
+		/* =========================================================
+		   API JSONP
+		========================================================= */
+
+		function loadApi(api, params, callbackName) {
+			const query = new URLSearchParams();
+
+			query.set('api', api);
+			query.set('callback', callbackName);
+			query.set('_', Date.now());
+
+			Object.keys(params || {}).forEach(function(key) {
+				query.set(key, params[key]);
+			});
+
+			const script = document.createElement('script');
+			script.id = callbackName;
+			script.src = API_URL + '?' + query.toString();
+			script.async = true;
+
+			script.onerror = function() {
+				console.error('API request failed:', api);
+
+				if (window[callbackName]) delete window[callbackName];
+				if (script.parentNode) script.parentNode.removeChild(script);
+
+				showGlobalMessage('Sambungan ke server gagal. Sila cuba lagi.', 'error');
+			};
+
+			document.body.appendChild(script);
+		}
+
+
+		/* =========================================================
+		   UI
+		========================================================= */
+
+		function showGlobalMessage(message, type) {
+			const element = document.getElementById('globalMessage');
+
+			element.textContent = message;
+			element.className = 'message';
+
+			if (type === 'success') {
+				element.classList.add('success');
+			}
+			else if (type === 'error') {
+				element.classList.add('error');
+			}
+			else if (type === 'warning') {
+				element.classList.add('warning');
+			}
+
+			element.classList.remove('hidden');
+		}
+
+	</script>
+
+</body>
+
+</html>

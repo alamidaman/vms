@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login PPAI</title>
+<style>
+:root{--navy:#102b4e;--blue:#174a7c}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(135deg,#edf3fa,#f8fafc);font-family:Arial,sans-serif;color:#1d2939;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:420px;background:white;border-radius:18px;padding:32px;box-shadow:0 15px 45px #102b4e20}
+.brand{text-align:center;margin-bottom:24px}
+.brand img{width:76px;height:76px;object-fit:contain}
+.brand h1{font-size:23px;margin:12px 0 6px;color:var(--navy)}
+.brand p{font-size:13px;color:#667085;margin:0}
+label{display:block;font-size:14px;font-weight:bold;margin:16px 0 7px}
+input{width:100%;padding:13px 14px;border:1px solid #d0d5dd;border-radius:9px;font-size:15px}
+button{width:100%;border:0;border-radius:9px;padding:14px;background:var(--navy);color:white;font-size:15px;font-weight:bold;cursor:pointer;margin-top:22px}
+button:disabled{opacity:.65;cursor:wait}
+.message{font-size:13px;line-height:1.5;color:#b42318;margin-top:14px}
+.back{display:block;text-align:center;margin-top:22px;color:var(--blue);text-decoration:none;font-size:14px}
+.note{font-size:12px;color:#667085;text-align:center;margin-top:18px}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand">
+    <img src="../logo.png" alt="Logo Alam Idaman" onerror="this.style.display='none'">
+    <h1>LOGIN PPAI</h1>
+    <p>Portal Pengurusan Alam Idaman</p>
+  </div>
+
+  <form id="loginForm">
+    <label for="username">Username</label>
+    <input id="username" name="username" autocomplete="username" required>
+
+    <label for="password">Kata Laluan</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+    <button id="loginButton" type="submit">LOG MASUK</button>
+    <p class="message" id="message" role="alert"></p>
+  </form>
+
+  <a class="back" href="../index.html">← Kembali ke halaman utama</a>
+  <p class="note">Akses untuk pengguna yang dibenarkan sahaja.</p>
+</main>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+const DASHBOARD_URL = 'https://alamidaman.github.io/alam-idaman-qr-scanner/admin/dashboard.html';
+
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const button = document.getElementById('loginButton');
+  const message = document.getElementById('message');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+
+  button.disabled = true;
+  button.textContent = 'SEDANG LOG MASUK...';
+  message.textContent = '';
+
+  try {
+    /*
+     * Apps Script mesti memulangkan JSON bagi action "login".
+     * Kod doPost() semasa yang memulangkan HTML perlu diubah
+     * sebelum kaedah ini boleh berfungsi.
+     */
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        action: 'login',
+        username: username,
+        password: password
+      })
+    });
+
+    const text = await response.text();
+    let result;
+
+    try {
+      result = JSON.parse(text);
+    } catch (err) {
+      throw new Error('Backend masih memulangkan HTML. doPost() perlu diubah kepada respons JSON.');
+    }
+
+    if (!result.success || !result.token) {
+      throw new Error(result.message || 'Username atau kata laluan tidak sah.');
+    }
+
+    sessionStorage.setItem('PPAI_SESSION_TOKEN', result.token);
+
+    // URL akhir kekal pada GitHub Pages.
+    window.location.replace(DASHBOARD_URL + '?token=' + encodeURIComponent(result.token));
+
+  } catch (err) {
+    message.textContent = err.message || 'Tidak dapat menghubungi sistem login.';
+    button.disabled = false;
+    button.textContent = 'LOG MASUK';
+  }
+});
+</script>
+</body>
+</html>

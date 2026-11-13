@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Scanner VMS Alam Idaman</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #fff;
+      padding: 18px;
+      margin-bottom: 15px;
+      border-radius: 14px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px 18px;
+    }
+
+    .logo {
+      display: block;
+      width: 95px;
+      height: 95px;
+      object-fit: contain;
+      margin: 0 auto 12px;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      color: #666;
+      font-size: 15px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 8px;
+      background: #1a73e8;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .btn-stop {
+      background: #666;
+    }
+
+    .btn-checkin {
+      background: #188038;
+      font-size: 18px;
+    }
+
+    #reader {
+      width: 100%;
+      min-height: 280px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #111;
+    }
+
+    #reader video {
+      width: 100% !important;
+      height: auto !important;
+      border-radius: 12px;
+    }
+
+    .message {
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 8px;
+      text-align: center;
+      background: #f1f3f4;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success {
+      background: #d9ead3;
+      color: #137333;
+    }
+
+    .error {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status {
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .status-valid {
+      background: #d9ead3;
+      color: #137333;
+    }
+
+    .status-expired {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .detail-label {
+      color: #666;
+      flex: 0 0 42%;
+    }
+
+    .detail-value {
+      font-weight: bold;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .small-note {
+      margin-top: 10px;
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="card header">
+      <img src="logo.png" alt="Alam Idaman" class="logo">
+      <div class="subtitle">Guard Visitor Management</div>
+    </div>
+
+    <!-- QR SCANNER -->
+    <div class="card">
+      <div class="section-title">Scan Visitor QR</div>
+      <div id="reader"></div>
+      <div id="scannerMessage" class="message">
+        Tekan START CAMERA untuk scan QR Visitor Pass.
+      </div>
+      <button id="startBtn" type="button" onclick="startScanner()">START CAMERA</button>
+      <button id="stopBtn" type="button" class="btn-stop" onclick="stopScanner()" disabled>STOP CAMERA</button>
+    </div>
+
+    <!-- MANUAL SEARCH -->
+    <div class="card">
+      <div class="section-title">Manual Visitor ID</div>
+      <input id="visitorIdInput" type="text" placeholder="VIS-20261007-83BE0226" autocomplete="off">      
+      <button type="button" onclick="searchById()">SEARCH VISITOR</button>
+    </div>
+    
+    <!-- OPEN HOUSE RESULT -->
+    <div id="openHouseResult" class="card hidden">
+      <div class="section-title">Open House Information</div>
+    
+      <div class="detail-row">
+        <div class="detail-label">Open House ID</div>
+        <div id="ohDetailId" class="detail-value">-</div>
+      </div>
+    
+      <div class="detail-row">
+        <div class="detail-label">Nama Tuan Rumah</div>
+        <div id="ohDetailOwner" class="detail-value">-</div>
+      </div>
+    
+      <div class="detail-row">
+        <div class="detail-label">Unit Rumah</div>
+        <div id="ohDetailUnit" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">No. Telefon</div>
+        <div id="ohDetailPhone" class="detail-value">-</div>
+      </div>
+    
+      <div class="detail-row">
+        <div class="detail-label">Tarikh Open House</div>
+        <div id="ohDetailDate" class="detail-value">-</div>
+      </div>
+    
+      <div class="section-title" style="margin-top:12px;">Maklumat Kenderaan</div>
+    
+      <label for="ohPlateInput">Nombor Plat Kenderaan</label>
+      <input id="ohPlateInput" type="text" placeholder="Contoh: ABC1234" autocomplete="off" style="text-transform: uppercase; margin-top:12px;">
+      <div id="ohLicenseArea" class="hidden">
+        <label for="ohLicensePhoto" style="display:block;margin-top:14px;">Gambar depan lesen memandu</label>
+        <input id="ohLicensePhoto" type="file" accept="image/*" capture="environment" style="margin-top:8px;width:100%;">
+      </div>
+    
+      <button id="ohRecordBtn" type="button" onclick="recordOpenHouseScan()">REKOD PELAWAT</button>
+    </div>
+
+    <!-- VISITOR RESULT -->
+    <div id="visitorResult" class="card hidden">
+      <div class="section-title">Visitor Information</div>
+      <div id="visitorStatus" class="status">-</div>
+      <div id="visitorStatusMessage" class="message hidden"></div>
+
+      <div class="detail-row">
+        <div class="detail-label">Visitor ID</div>
+        <div id="detailVisitorId" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Unit Rumah</div>
+        <div id="detailUnit" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Nama Penduduk</div>
+        <div id="detailResident" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">No. Telefon</div>
+        <div id="detailPhone" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Jenis Pelawat</div>
+        <div id="detailVisitorType" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Nama Pelawat</div>
+        <div id="detailVisitorName" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">No. Plat</div>
+        <div id="detailPlate" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Jenis Kenderaan</div>
+        <div id="detailVehicle" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Tujuan Lawatan</div>
+        <div id="detailPurpose" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Valid From</div>
+        <div id="detailValidFrom" class="detail-value">-</div>
+      </div>
+
+      <div class="detail-row">
+        <div class="detail-label">Valid Until</div>
+        <div id="detailValidUntil" class="detail-value">-</div>
+      </div>
+
+      <!-- CHECK IN -->
+      <div id="checkInArea" class="hidden">
+        <div id="visitorLicenseArea" class="hidden">
+          <label for="visitorLicensePhoto" style="display:block;margin:12px 0 6px;">Gambar depan lesen memandu (wajib untuk CHECK IN pertama)</label>
+          <input id="visitorLicensePhoto" type="file" accept="image/*" capture="environment" style="width:100%;margin-bottom:12px;">
+        </div>
+        <button id="checkInBtn" type="button" class="btn-checkin" onclick="checkInVisitor()">CHECK IN</button>
+      </div>
+
+      <!-- ALREADY CHECKED IN -->
+      <div id="alreadyCheckedIn" class="message warning hidden">
+        SUDAH CHECK IN
+      </div>
+    </div>
+
+    <!-- GLOBAL MESSAGE -->
+    <div id="globalMessage" class="message hidden"></div>
+    <div class="small-note">Alam Idaman Visitor Management System</div>
+  </div>
+
+  <script>
+    /* =========================================================
+       API CONFIG
+    ========================================================= */
+
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
+
+    const GUARD_NAME   = 'AI GUARD';    
+    let scanner        = null;
+    let scanning       = false;
+    let scanLocked     = false;
+    let currentVisitor = null;
+    let scannerLicenseRequired = true;
+
+    /* =========================================================
+       SCANNER SETTINGS
+    ========================================================= */
+
+    function loadScannerSettings() {
+      const callbackName = 'scannerSettingsCallback_' + Date.now();
+
+      window[callbackName] = function(response) {
+        try {
+          if (!response || response.success !== true) {
+            console.warn('Gagal mendapatkan tetapan Scanner License.');
+            return;
+          }
+
+          scannerLicenseRequired = response.licenseRequired === true;
+
+          const visitorLicenseArea = document.getElementById('visitorLicenseArea');
+          const ohLicenseArea = document.getElementById('ohLicenseArea');
+
+          if (visitorLicenseArea) visitorLicenseArea.classList.toggle('hidden', !scannerLicenseRequired);
+          if (ohLicenseArea) ohLicenseArea.classList.toggle('hidden', !scannerLicenseRequired);
+
+          console.log('Scanner License Required:', scannerLicenseRequired);
+        } finally {
+          delete window[callbackName];
+          const script = document.getElementById(callbackName);
+          if (script) script.remove();
+        }
+      };
+
+      loadApi('license_setting', {}, callbackName);
+    }
+
+    /* =========================================================
+       PAGE LOAD
+    ========================================================= */
+
+    window.addEventListener('load', function() {
+      console.log('Visitor Management System ready.');
+      loadScannerSettings();
+    });
+
+    /* =========================================================
+       START CAMERA
+    ========================================================= */
+
+    async function startScanner() {
+      if (scanning) return;
+
+      resetVisitorInformation();
+      scanLocked = false;
+      setScannerMessage('Memulakan kamera...');
+      document.getElementById('startBtn').disabled = true;
+
+      try {
+        if (!window.isSecureContext) {
+          throw new Error('HTTPS_REQUIRED');
+        }
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('CAMERA_NOT_SUPPORTED');
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' } },
+          audio: false
+        });
+
+        stream.getTracks().forEach(function(track) {
+          track.stop();
+        });
+
+        scanner = new Html5Qrcode('reader');
+
+        const cameras = await Html5Qrcode.getCameras();
+
+        if (!cameras || cameras.length === 0) {
+          throw new Error('NO_CAMERA');
+        }
+
+        let cameraId = cameras[0].id;
+
+        for (let i = 0; i < cameras.length; i++) {
+          const label = (cameras[i].label || '').toLowerCase();
+
+          if (
+            label.includes('back') ||
+            label.includes('rear') ||
+            label.includes('environment')
+          ) {
+            cameraId = cameras[i].id;
+            break;
+          }
+        }
+
+        await scanner.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: function(width, height) {
+              const minEdge = Math.min(width, height);
+              const size = Math.min(Math.floor(minEdge * 0.70), 300);
+              return { width: size, height: size };
+            },
+            aspectRatio: 1.0
+          },
+          function(decodedText) {
+            if (scanLocked || !decodedText) return;
+            handleQrResult(decodedText);
+          },
+          function() {}
+        );
+
+        scanning = true;
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('stopBtn').disabled = false;
+
+        setScannerMessage('Kamera aktif. Halakan kamera ke QR Visitor Pass.');
+      } catch (error) {
+        console.error('Camera error:', error);
+
+        scanning = false;
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+
+        let message = 'Kamera tidak dapat dimulakan.';
+
+        if (error.message === 'HTTPS_REQUIRED') {
+          message = 'Scanner mesti menggunakan HTTPS.';
+        } else if (error.message === 'CAMERA_NOT_SUPPORTED') {
+          message = 'Browser tidak menyokong akses kamera.';
+        } else if (error.message === 'NO_CAMERA') {
+          message = 'Tiada kamera dikesan.';
+        } else if (error.name === 'NotAllowedError') {
+          message = 'Akses kamera ditolak. Sila benarkan Camera untuk Chrome.';
+        } else if (error.name === 'NotReadableError') {
+          message = 'Kamera sedang digunakan oleh aplikasi lain.';
+        }
+
+        setScannerMessage(message);
+      }
+    }
+
+    /* =========================================================
+       STOP CAMERA
+    ========================================================= */
+
+    async function stopScanner() {
+      scanLocked = true;
+
+      if (!scanner || !scanning) {
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('stopBtn').disabled = true;
+        return;
+      }
+
+      try {
+        await scanner.stop();
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        scanner.clear();
+      } catch (error) {
+        console.error(error);
+      }
+
+      scanner = null;
+      scanning = false;
+
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+
+      setScannerMessage('Scanner dihentikan.');
+    }
+
+    /* =========================================================
+       RESET VISITOR INFORMATION
+    ========================================================= */
+
+    function resetVisitorInformation() {
+      currentVisitor = null;
+      document.getElementById('visitorResult').classList.add('hidden');
+      document.getElementById('visitorStatus').textContent = '-';
+      document.getElementById('alreadyCheckedIn').classList.add('hidden');
+      document.getElementById('checkInArea').classList.add('hidden');
+      document.getElementById('openHouseResult').classList.add('hidden');
+      document.getElementById('visitorIdInput').value = '';
+    }
+
+    /* =========================================================
+       QR RESULT
+    ========================================================= */
+    
+    function handleQrResult(decodedText) {
+      if (scanLocked) return;
+    
+      scanLocked = true;
+    
+      const visitorId = String(decodedText || '').trim().toUpperCase();
+    
+      if (visitorId.startsWith('VIS-')) {
+        stopScanner();
+        document.getElementById('visitorIdInput').value = visitorId;
+        searchVisitor(visitorId);
+        return;
+      }
+    
+      if (visitorId.startsWith('OH-')) {
+        stopScanner();
+        document.getElementById('visitorIdInput').value = visitorId;
+        searchOpenHouse(visitorId);
+        return;
+      }
+    
+      scanLocked = false;
+      setScannerMessage(
+        'QR tidak sah. Sila gunakan QR Visitor Pass atau Open House Alam Idaman.'
+      );
+    }
+
+    /* =========================================================
+       SEARCH VISITOR
+    ========================================================= */
+    
+    function searchById() {
+      const input = document.getElementById('visitorIdInput');
+      const id = input.value.trim().toUpperCase();
+    
+      if (id.startsWith('VIS-')) {
+        searchVisitor(id);
+      } else if (id.startsWith('OH-')) {
+        searchOpenHouse(id);
+      } else {
+        showGlobalMessage(
+          'ID tidak sah. Masukkan ID VIS- atau OH-.',
+          'error'
+        );
+      }
+    }
+
+    function searchVisitor(visitorId = '') {
+      const input = document.getElementById('visitorIdInput');
+
+      if (!visitorId) visitorId = input.value.trim();
+
+      if (!visitorId) {
+        showGlobalMessage('Sila masukkan Visitor ID.', 'error');
+        return;
+      }
+
+      visitorId = visitorId.toUpperCase();
+
+      resetVisitorInformation();
+      input.value = visitorId;
+
+      showGlobalMessage('MENCARI VISITOR...', '');
+
+      const callbackName = 'visitorCallback_' + Date.now();
+
+      window[callbackName] = function(response) {
+        try {
+          if (!response || !response.success) {
+            currentVisitor = null;
+            document.getElementById('visitorResult').classList.add('hidden');
+
+            showGlobalMessage(
+              response && response.message
+                ? response.message
+                : 'Visitor tidak dijumpai.',
+              'error'
+            );
+
+            return;
+          }
+
+          currentVisitor = response.visitor;
+          displayVisitor(response.visitor);
+          recordScan();
+
+          if (response.visitor.status === 'REJECTED') {
+            showGlobalMessage(
+              'Pelawat ini tidak dibenarkan masuk oleh tuan rumah. Sila hubungi tuan rumah untuk maklumat lanjut.',
+              'error'
+            );
+          } else if (response.visitor.status === 'EXPIRED') {
+            showGlobalMessage(
+              'QR Code ini telah tamat tempoh. Sila minta tuan rumah membuat pendaftaran pelawat baharu.',
+              'warning'
+            );
+          } else {
+            showGlobalMessage('Visitor berjaya dijumpai.', 'success');
+          }
+        } finally {
+          delete window[callbackName];
+
+          const script = document.getElementById(callbackName);
+          if (script) script.remove();
+        }
+      };
+
+      loadApi('visitor', {
+        visitorId: visitorId
+      }, callbackName);
+    }
+    
+    function searchOpenHouse(openHouseId = '') {
+      const input = document.getElementById('visitorIdInput');
+    
+      if (!openHouseId) {
+        openHouseId = input.value.trim();
+      }
+    
+      if (!openHouseId) {
+        showGlobalMessage('Sila masukkan Open House ID.', 'error');
+        scanLocked = false;
+        return;
+      }
+    
+      openHouseId = openHouseId.toUpperCase();
+    
+      resetVisitorInformation();
+    
+      document.getElementById('openHouseResult').classList.add('hidden');
+      input.value = openHouseId;
+    
+      showGlobalMessage('MENCARI OPEN HOUSE...', '');
+    
+      const callbackName = 'openHouseCallback_' + Date.now();
+    
+      window[callbackName] = function(response) {
+        try {
+          if (!response || !response.success || !response.openHouse) {
+            document.getElementById('openHouseResult').classList.add('hidden');
+            showGlobalMessage(
+              response && response.message
+                ? response.message
+                : 'Open House ID tidak dijumpai.',
+              'error'
+            );
+            return;
+          }
+    
+          const oh = response.openHouse;
+    
+          document.getElementById('ohDetailId').textContent =
+            oh.openHouseId || '-';
+    
+          document.getElementById('ohDetailOwner').textContent =
+            oh.ownerName || '-';
+    
+          document.getElementById('ohDetailUnit').textContent =
+            oh.unit || '-';
+
+          document.getElementById('ohDetailPhone').textContent =
+            oh.phone || '-';
+    
+          document.getElementById('ohDetailDate').textContent =
+            oh.eventDate || '-';
+    
+          document.getElementById('ohPlateInput').value = '';
+    
+          document.getElementById('openHouseResult').classList.remove('hidden');
+    
+          showGlobalMessage(
+            'Open House sah. Sila masukkan nombor plat kenderaan.',
+            'success'
+          );
+        } finally {
+          delete window[callbackName];
+    
+          const script = document.getElementById(callbackName);
+          if (script) script.remove();
+    
+          scanLocked = false;
+        }
+      };
+    
+      loadApi('openhouse', {
+        openHouseId: openHouseId
+      }, callbackName);
+    }
+    
+    async function recordOpenHouseScan() {
+      const openHouseId = document.getElementById('ohDetailId').textContent.trim();
+      const plateInput = document.getElementById('ohPlateInput');
+      const plateNumber = plateInput.value.trim().toUpperCase();
+      const photoInput = document.getElementById('ohLicensePhoto');
+      const button = document.getElementById('ohRecordBtn');
+
+      if (!openHouseId || openHouseId === '-') return showGlobalMessage('Sila scan QR Open House terlebih dahulu.', 'error');
+      if (!plateNumber) {
+        showGlobalMessage('Sila masukkan nombor plat kenderaan.', 'error');
+        plateInput.focus();
+        return;
+      }
+
+      if (scannerLicenseRequired && (!photoInput.files || !photoInput.files[0])) {
+        showGlobalMessage('Sila ambil gambar depan lesen memandu bagi kenderaan ini.', 'error');
+        photoInput.focus();
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = scannerLicenseRequired ? 'MENYIMPAN GAMBAR...' : 'MEREKODKAN PELAWAT...';
+      showGlobalMessage(scannerLicenseRequired ? 'Sedang menyimpan gambar lesen dan merekodkan nombor plat...' : 'Sedang merekodkan nombor plat Open House...', '');
+
+      try {
+        const payload = {
+          action: 'openhouse',
+          openHouseId: openHouseId,
+          guardName: GUARD_NAME,
+          plateNumber: plateNumber
+        };
+
+        if (scannerLicenseRequired) {
+          payload.imageData = await compressLicenseImage(photoInput.files[0]);
+        }
+
+        const response = await submitLicenseUpload(payload);
+        if (!response.success) throw new Error(response.message || 'Gagal merekodkan pelawat.');
+
+        showGlobalMessage('✓ ' + response.message + ' Plat: ' + plateNumber, 'success');
+        plateInput.value = '';
+        photoInput.value = '';
+      } catch (err) {
+        showGlobalMessage(err.message || 'Gagal merekodkan pelawat. Plat tidak direkodkan.', 'error');
+      } finally {
+        button.disabled = false;
+        button.textContent = 'REKOD PELAWAT';
+      }
+    }
+
+    /* =========================================================
+       DISPLAY VISITOR
+    ========================================================= */
+
+    function displayVisitor(visitor) {
+      document.getElementById('visitorResult').classList.remove('hidden');
+
+      document.getElementById('detailVisitorId').textContent = visitor.visitorId || '-';
+      document.getElementById('detailUnit').textContent = visitor.unit || '-';
+      document.getElementById('detailResident').textContent = visitor.residentName || '-';
+      document.getElementById('detailPhone').textContent = visitor.phone || '-';
+      document.getElementById('detailVisitorType').textContent =
+        visitor.actualVisitorType || visitor.visitorType || '-';
+      document.getElementById('detailVisitorName').textContent = visitor.visitorName || '-';
+      document.getElementById('detailPlate').textContent = visitor.plate || '-';
+      document.getElementById('detailVehicle').textContent = visitor.vehicleType || '-';
+      document.getElementById('detailPurpose').textContent = visitor.purpose || '-';
+      document.getElementById('detailValidFrom').textContent = visitor.validFrom || '-';
+      document.getElementById('detailValidUntil').textContent = visitor.validUntil || '-';
+
+      const status = document.getElementById('visitorStatus');
+      const statusMessage = document.getElementById('visitorStatusMessage');
+
+      status.className = 'status';
+      statusMessage.className = 'message hidden';
+      statusMessage.textContent = '';
+
+      if (visitor.status === 'REJECTED') {
+        status.classList.add('status-expired');
+        status.textContent = 'REJECTED';
+        statusMessage.textContent =
+          'Pelawat ini tidak dibenarkan masuk oleh tuan rumah. Sila hubungi tuan rumah untuk maklumat lanjut.';
+        statusMessage.classList.add('error');
+        statusMessage.classList.remove('hidden');
+      } else if (visitor.status === 'EXPIRED') {
+        status.classList.add('status-expired');
+        status.textContent = 'EXPIRED';
+        statusMessage.textContent =
+          'QR Code ini telah tamat tempoh. Sila minta tuan rumah membuat pendaftaran pelawat baharu.';
+        statusMessage.classList.add('error');
+        statusMessage.classList.remove('hidden');
+      } else {
+        status.classList.add('status-valid');
+        status.textContent = 'VALID';
+        statusMessage.textContent = 'Pelawat dibenarkan masuk.';
+        statusMessage.classList.add('success');
+        statusMessage.classList.remove('hidden');
+      }
+
+      const checkInArea = document.getElementById('checkInArea');
+      const alreadyCheckedIn = document.getElementById('alreadyCheckedIn');
+
+      checkInArea.classList.add('hidden');
+      alreadyCheckedIn.classList.add('hidden');
+
+      if (visitor.status === 'REJECTED' || visitor.status === 'EXPIRED') {
+        return;
+      }
+
+      if (visitor.checkedIn) {
+        alreadyCheckedIn.classList.remove('hidden');
+      } else {
+        checkInArea.classList.remove('hidden');
+      }
+    }
+
+    /* =========================================================
+       RECORD SCAN - NO GUARD NAME
+    ========================================================= */
+
+    
+    function recordScan() {
+        if (!currentVisitor) return;
+    
+        const callbackName = 'scanCallback_' + Date.now();
+    
+        window[callbackName] = function(response) {
+            try {
+                console.log('Scan Log response:', response);
+    
+                if (response && response.success) {
+                    console.log('SCAN berjaya direkodkan.');
+                } else {
+                    console.warn(
+                        response && response.message
+                            ? response.message
+                            : 'SCAN tidak direkodkan.'
+                    );
+                }
+            } finally {
+                delete window[callbackName];
+    
+                const script = document.getElementById(callbackName);
+                if (script) script.remove();
+            }
+        };
+    
+        loadApi('scan', {
+            visitorId: currentVisitor.visitorId,
+            guardName: GUARD_NAME
+        }, callbackName);
+    }
+
+
+    /* =========================================================
+       CHECK IN - NO GUARD NAME
+    ========================================================= */
+    
+    async function checkInVisitor() {
+      if (!currentVisitor) {
+        showGlobalMessage('Tiada Visitor dipilih.', 'error');
+        return;
+      }
+
+      const button = document.getElementById('checkInBtn');
+      const photoInput = document.getElementById('visitorLicensePhoto');
+
+      if (scannerLicenseRequired && (!photoInput.files || !photoInput.files[0])) {
+        showGlobalMessage('Sila ambil gambar depan lesen memandu sebelum CHECK IN.', 'error');
+        photoInput.focus();
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = scannerLicenseRequired ? 'MENYIMPAN GAMBAR...' : 'SEDANG CHECK IN...';
+
+      try {
+        const payload = {
+          action: 'visitor_checkin',
+          visitorId: currentVisitor.visitorId,
+          guardName: GUARD_NAME
+        };
+
+        if (scannerLicenseRequired) {
+          payload.imageData = await compressLicenseImage(photoInput.files[0]);
+        }
+
+        const response = await submitLicenseUpload(payload);
+        if (!response.success) throw new Error(response.message || 'CHECK IN gagal.');
+
+        currentVisitor.checkedIn = true;
+        displayVisitor(currentVisitor);
+        photoInput.value = '';
+        showGlobalMessage('✓ ' + response.message, 'success');
+      } catch (err) {
+        showGlobalMessage(err.message || 'CHECK IN gagal. Sila cuba sekali lagi.', 'error');
+      } finally {
+        button.disabled = false;
+        button.textContent = 'CHECK IN';
+      }
+    }
+
+    function compressLicenseImage(file) {
+      return new Promise(function(resolve, reject) {
+        if (!file || !file.type || !file.type.startsWith('image/')) return reject(new Error('Fail gambar tidak sah.'));
+        const reader = new FileReader();
+        reader.onerror = function() { reject(new Error('Gagal membaca gambar. Sila ambil semula.')); };
+        reader.onload = function() {
+          const img = new Image();
+          img.onerror = function() { reject(new Error('Gambar tidak dapat dibuka.')); };
+          img.onload = function() {
+            const maxWidth = 1200;
+            const scale = Math.min(1, maxWidth / img.width);
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(img.width * scale);
+            canvas.height = Math.round(img.height * scale);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            let data = canvas.toDataURL('image/jpeg', 0.68);
+            if (data.length > 600000) data = canvas.toDataURL('image/jpeg', 0.48);
+            if (data.length > 650000) return reject(new Error('Gambar terlalu besar. Sila ambil gambar semula dengan lebih dekat.'));
+            resolve(data);
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function submitLicenseUpload(payload) {
+      return new Promise(function(resolve, reject) {
+        const token = 'lic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+        const iframeName = 'licenseUploadFrame_' + token;
+        const iframe = document.createElement('iframe');
+        iframe.name = iframeName; iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        const form = document.createElement('form');
+        form.method = 'POST'; form.action = API_URL; form.target = iframeName; form.style.display = 'none';
+        const fields = Object.assign({}, payload, {token:token});
+        Object.keys(fields).forEach(function(key) {
+          const input = document.createElement('input'); input.type = 'hidden'; input.name = key; input.value = fields[key]; form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        let finished = false; let pollCount = 0;
+        const cleanup = function() { form.remove(); iframe.remove(); };
+        const poll = function() {
+          if (finished) return;
+          pollCount++;
+          const cb = 'licenseStatus_' + Date.now() + '_' + pollCount;
+          window[cb] = function(response) {
+            delete window[cb];
+            const script = document.getElementById(cb); if (script) script.remove();
+            if (response && !response.pending && (response.success || response.message)) {
+              finished = true; cleanup(); resolve(response); return;
+            }
+            if (pollCount >= 45) { finished = true; cleanup(); reject(new Error('Masa menunggu tamat. Semak rekod sebelum cuba lagi untuk mengelakkan rekod berganda.')); return; }
+            setTimeout(poll, 1000);
+          };
+          loadApi('upload_status', {token:token}, cb);
+        };
+        form.submit();
+        setTimeout(poll, 1200);
+        setTimeout(function() { if (!finished) { finished = true; cleanup(); reject(new Error('Tiada pengesahan daripada server. Semak tab log dan folder Drive sebelum cuba lagi.')); } }, 50000);
+      });
+    }
+
+
+    /* =========================================================
+       API JSONP
+    ========================================================= */
+
+    function loadApi(api, params, callbackName) {
+      const query = new URLSearchParams();
+
+      query.set('api', api);
+      query.set('callback', callbackName);
+      query.set('_', Date.now());
+
+      Object.keys(params || {}).forEach(function(key) {
+        query.set(key, params[key]);
+      });
+
+      const script = document.createElement('script');
+
+      script.id = callbackName;
+      script.src = API_URL + '?' + query.toString();
+      script.async = true;
+
+      script.onerror = function() {
+        console.error('API request failed:', api);
+
+        if (window[callbackName]) {
+          delete window[callbackName];
+        }
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      };
+
+      document.body.appendChild(script);
+    }
+
+    /* =========================================================
+       UI
+    ========================================================= */
+
+    function setScannerMessage(message) {
+      document.getElementById('scannerMessage').textContent = message;
+    }
+
+    function showGlobalMessage(message, type) {
+      const element = document.getElementById('globalMessage');
+
+      element.textContent = message;
+      element.className = 'message';
+
+      if (type === 'success') {
+        element.classList.add('success');
+      } else if (type === 'error') {
+        element.classList.add('error');
+      } else if (type === 'warning') {
+        element.classList.add('warning');
+      }
+
+      element.classList.remove('hidden');
+    }
+
+    /* =========================================================
+       VISIBILITY
+    ========================================================= */
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden && scanning) {
+        stopScanner();
+      }
+    });
+  </script>
+</body>
+</html>

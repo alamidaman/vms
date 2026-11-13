@@ -1,0 +1,621 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rekod Bayaran Maintenance | Alam Idaman</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f1f5f9;
+      color: #172033;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 25px auto;
+    }
+
+    .header {
+      background: #123b65;
+      color: white;
+      padding: 24px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .header p {
+      margin: 0;
+      opacity: .85;
+      font-size: 14px;
+    }
+
+    .search-box,
+    .results {
+      background: white;
+      padding: 22px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .search-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      color: #475569;
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+    }
+
+    input[readonly] {
+      background: #f8fafc;
+      color: #475569;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 13px 20px;
+      background: #1769aa;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .generate-button {
+      width: 100%;
+    }
+
+    .results {
+      border-radius: 0 0 16px 16px;
+    }
+
+    #status {
+      margin: 0 0 16px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 360px;
+      padding: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      resize: vertical;
+      white-space: pre;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .copy-button {
+      flex: 1;
+      background: #16803c;
+    }
+
+    .clear-button {
+      background: #475569;
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .note strong {
+      color: #334155;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        margin: 8px auto;
+      }
+
+      .search-box {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .header h1 {
+        font-size: 21px;
+      }
+
+      .copy-button,
+      .clear-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <header class="header">
+      <h1>Rekod Bayaran Maintenance</h1>
+      <p>Alam Idaman · Sistem Maklumat Penduduk</p>
+    </header>
+
+    <section class="search-box">
+
+      <div>
+        <label for="currentMonth">Bulan Kutipan</label>
+        <input
+          id="currentMonth"
+          type="text"
+          readonly
+        >
+      </div>
+
+      <div>
+        <label for="blockInput">Blok</label>
+        <select id="blockInput">
+          <option value="">Memuatkan blok...</option>
+        </select>
+      </div>
+
+      <div>
+        <button
+          id="generateButton"
+          class="generate-button"
+          type="button"
+        >
+          Jana Rekod
+        </button>
+      </div>
+
+    </section>
+
+    <section class="results">
+
+      <div id="status" role="status">
+        Sedang memuatkan data...
+      </div>
+
+      <textarea
+        id="output"
+        placeholder="Rekod maintenance akan dipaparkan di sini..."
+        spellcheck="false" readonly
+      ></textarea>
+
+      <div class="action-buttons">
+
+        <button
+          id="copyButton"
+          class="copy-button"
+          type="button"
+        >
+          Copy ke WhatsApp
+        </button>
+
+        <button
+          id="clearButton"
+          class="clear-button"
+          type="button"
+        >
+          Kosongkan
+        </button>
+
+      </div>
+
+      <div class="note">
+        <strong>Format caj:</strong><br>
+        RM80 = Maintenance asas<br>
+        X = Kenderaan Extra (RM10 setiap satu selepas 5 kenderaan)<br>
+        P = Sewa parking (RM20 setiap satu)<br>
+        TT = Penambahan bayaran<br>
+        Teks menggunakan tanda * untuk bold apabila dipaste ke WhatsApp.
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    const BASE_MAINTENANCE = 80;
+    const VEHICLE_LIMIT = 5;
+    const VEHICLE_EXTRA_CHARGE = 10;
+    const PARKING_CHARGE = 20;
+
+    const currentMonthInput =
+      document.getElementById('currentMonth');
+
+    const blockInput =
+      document.getElementById('blockInput');
+
+    const generateButton =
+      document.getElementById('generateButton');
+
+    const statusBox =
+      document.getElementById('status');
+
+    const output =
+      document.getElementById('output');
+
+    let allRecords = [];
+
+    /**
+     * Bulan semasa menggunakan timezone Malaysia.
+     */
+    function getCurrentMonthYear() {
+      const now = new Date();
+
+      const monthNames = [
+        'Januari',
+        'Februari',
+        'Mac',
+        'April',
+        'Mei',
+        'Jun',
+        'Julai',
+        'Ogos',
+        'September',
+        'Oktober',
+        'November',
+        'Disember'
+      ];
+
+      const malaysiaDate = new Date(
+        now.toLocaleString('en-US', {
+          timeZone: 'Asia/Kuala_Lumpur'
+        })
+      );
+
+      return {
+        month: monthNames[malaysiaDate.getMonth()],
+        year: malaysiaDate.getFullYear()
+      };
+    }
+
+    function updateCurrentMonth() {
+      const current = getCurrentMonthYear();
+
+      currentMonthInput.value =
+        current.month + ' ' + current.year;
+    }
+
+    /**
+     * Tukar nombor kepada RM.
+     */
+    function money(value) {
+      return 'RM' + Number(value || 0).toFixed(0);
+    }
+
+    /**
+     * Bina baris WhatsApp menggunakan asterisk (*) untuk bold.
+     * Format: *B-01-01* | TT | 2X | 1P | *RM120* |
+     */
+    function createLine(record) {
+      const unit = String(record.unit || '').trim();
+      const residentName = String(record.name || '').trim();
+      const isVacant = !residentName || residentName.toLowerCase() === 'rumah kosong';
+
+      // Rumah kosong: display compact unit format and label only.
+      if (isVacant) {
+        const compactUnit = unit.replace(/^B-?(\d{2})-/, 'B-$1-');
+        return compactUnit + ' | Rumah Kosong';
+      }
+
+      const extraVehicles = Math.max(0, Number(record.extraVehicles || 0));
+      const parkingCount = Math.max(0, Number(record.parkingCount || 0));
+      const additionalPayment = Math.max(0, Number(record.additionalPayment || 0));
+
+      const total =
+        BASE_MAINTENANCE +
+        extraVehicles * VEHICLE_EXTRA_CHARGE +
+        parkingCount * PARKING_CHARGE +
+        additionalPayment;
+
+      const parts = [unit];
+
+      if (additionalPayment > 0) parts.push('TT');
+      if (extraVehicles > 0) parts.push(extraVehicles + 'X');
+      if (parkingCount > 0) parts.push(parkingCount + 'P');
+
+      parts.push('RM' + Number(total).toFixed(0));
+      return parts.join(' | ') + ' |';
+    }
+
+    function sortUnits(a, b) {
+      return String(a.unit).localeCompare(
+        String(b.unit),
+        undefined,
+        { numeric: true, sensitivity: 'base' }
+      );
+    }
+
+    /**
+     * B-01-... => Blok 01; B-04-... and B-3A-... => Blok 3A.
+     */
+    function getBlockFromUnit(unit) {
+      const value = String(unit || '').trim().toUpperCase();
+
+      // Special block: B-04-01 represents Blok 3A.
+      // Units B-3A-01, B-3A-02, etc. also belong to Blok 3A.
+      if (/^B-04-/.test(value) || /^B-3A-/.test(value)) {
+        return 'Blok 3A';
+      }
+
+      // Standard blocks: B-01-01 => Blok 1, B-02-01 => Blok 2, etc.
+      const match = value.match(/^B-?(\d{1,2})-/);
+      if (!match) return '';
+
+      const number = Number(match[1]);
+      return number >= 1 && number <= 12 ? 'Blok ' + String(number).padStart(2, '0') : '';
+    }
+
+    /**
+     * Dropdown menggunakan label Blok 01-09, Blok 3A, Blok 10-12.
+     */
+    function populateBlocks() {
+      const selected = blockInput.value;
+      blockInput.replaceChildren();
+
+      const blocks = [];
+      for (let i = 1; i <= 3; i++) blocks.push('Blok ' + String(i).padStart(2, '0'));
+      blocks.push('Blok 3A');
+      for (let i = 5; i <= 12; i++) {
+        blocks.push('Blok ' + (i <= 9 ? String(i).padStart(2, '0') : String(i)));
+      }
+
+      blocks.forEach(block => {
+        const option = document.createElement('option');
+        option.value = block;
+        option.textContent = block;
+        blockInput.appendChild(option);
+      });
+
+      if (selected && blocks.includes(selected)) {
+        blockInput.value = selected;
+      } else {
+        blockInput.value = 'Blok 01';
+      }
+    }
+
+    /**
+     * Jana output dari rekod terkini.
+     */
+    function renderRecords(records) {
+      const block = blockInput.value;
+      const current = getCurrentMonthYear();
+
+      const filtered = (Array.isArray(records) ? records : [])
+        .filter(record => getBlockFromUnit(record.unit) === block)
+        .sort(sortUnits);
+
+      const lines = [
+        '*REKOD BAYARAN MAINTENANCE*',
+        'Bulan: *' + current.month + ' ' + current.year + '*',
+        '*' + block + '*',
+        ''
+      ];
+
+      if (!filtered.length) {
+        lines.push('Tiada rekod penduduk untuk blok ini.');
+      } else {
+        filtered.forEach(record => lines.push(createLine(record)));
+      }
+
+      output.value = lines.join('\n');
+      output.scrollTop = 0;
+      statusBox.textContent = filtered.length +
+        ' rekod dijana. Data telah disegarkan. Semak sebelum copy ke WhatsApp.';
+    }
+
+    // URL Google Apps Script Web App (/exec), bukan URL GitHub Pages.
+    // Gantikan dengan URL deployment Apps Script anda.
+    const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+
+    /**
+     * Memanggil endpoint Apps Script menggunakan JSONP.
+     * Sesuai untuk HTML yang dihoskan di GitHub Pages (elak isu CORS).
+     */
+    function requestMaintenanceRecords() {
+      return new Promise((resolve, reject) => {
+        if (!MAINTENANCE_API_URL ||
+            MAINTENANCE_API_URL.indexOf('PASTE_') === 0) {
+          reject(new Error('Sila masukkan URL Web App Apps Script dalam MAINTENANCE_API_URL.'));
+          return;
+        }
+
+        const callbackName = 'maintenanceJsonp_' +
+          Date.now() + '_' + Math.floor(Math.random() * 1000000);
+        const script = document.createElement('script');
+        let timeoutId;
+
+        function cleanup() {
+          if (timeoutId) clearTimeout(timeoutId);
+          script.remove();
+          try {
+            delete window[callbackName];
+          } catch (_) {
+            window[callbackName] = undefined;
+          }
+        }
+
+        window[callbackName] = function(payload) {
+          cleanup();
+
+          if (!payload || payload.success !== true) {
+            reject(new Error(payload && payload.message
+              ? payload.message
+              : 'Respons API tidak sah.'));
+            return;
+          }
+
+          resolve(Array.isArray(payload.records) ? payload.records : []);
+        };
+
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('Tidak dapat menghubungi API maintenance. Semak URL dan deployment Web App.'));
+        };
+
+        const separator = MAINTENANCE_API_URL.indexOf('?') >= 0 ? '&' : '?';
+        script.src = MAINTENANCE_API_URL + separator +
+          'action=maintenanceRecords&callback=' +
+          encodeURIComponent(callbackName) +
+          '&_=' + Date.now();
+
+        timeoutId = setTimeout(function() {
+          cleanup();
+          reject(new Error('Permintaan tamat masa. Cuba semula.'));
+        }, 20000);
+
+        document.head.appendChild(script);
+      });
+    }
+
+    /**
+     * Jana output dan refresh data hanya apabila butang ditekan.
+     */
+    async function generateRecords() {
+      const block = blockInput.value;
+
+      if (!block) {
+        statusBox.textContent = 'Sila pilih blok terlebih dahulu.';
+        output.value = '';
+        return;
+      }
+
+      output.value = '';
+      statusBox.textContent = 'Sedang refresh data spreadsheet dan jana rekod...';
+      generateButton.disabled = true;
+      generateButton.textContent = 'Loading...';
+
+      try {
+        allRecords = await requestMaintenanceRecords();
+        renderRecords(allRecords);
+      } catch (error) {
+        output.value = '';
+        statusBox.textContent = 'Gagal refresh data: ' +
+          (error && error.message ? error.message : String(error));
+      } finally {
+        generateButton.disabled = false;
+        generateButton.textContent = 'Jana Rekod';
+      }
+    }
+
+    /**
+     * Load awal hanya menyediakan dropdown dan status.
+     * Tiada panggilan API atau output dijana sehingga butang ditekan.
+     */
+    function loadData() {
+      populateBlocks();
+      output.value = '';
+      generateButton.disabled = false;
+      generateButton.textContent = 'Jana Rekod';
+      statusBox.textContent = 'Pilih blok, kemudian klik Jana Rekod untuk mendapatkan data terkini.';
+    }
+
+    /**
+     * Copy teks ke clipboard.
+     */
+    async function copyToWhatsApp() {
+      if (!output.value.trim()) {
+        statusBox.textContent =
+          'Tiada rekod untuk disalin.';
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(output.value);
+
+        statusBox.textContent =
+          'Rekod berjaya disalin. Boleh paste ke WhatsApp.';
+      } catch (error) {
+        output.focus();
+        output.select();
+
+        const copied = document.execCommand('copy');
+
+        statusBox.textContent = copied
+          ? 'Rekod berjaya disalin. Boleh paste ke WhatsApp.'
+          : 'Sila pilih teks dan copy secara manual.';
+      }
+    }
+
+    /**
+     * Event listeners.
+     */
+    generateButton.addEventListener(
+      'click',
+      generateRecords
+    );
+
+    blockInput.addEventListener('change', function() {
+      output.value = '';
+      statusBox.textContent = 'Blok dipilih: ' + blockInput.value +
+        '. Klik Jana Rekod untuk memaparkan rekod.';
+    });
+
+    document.getElementById('copyButton')
+      .addEventListener('click', copyToWhatsApp);
+
+    document.getElementById('clearButton')
+      .addEventListener('click', function() {
+        output.value = '';
+
+        statusBox.textContent =
+          'Rekod dikosongkan.';
+      });
+
+    updateCurrentMonth();
+    populateBlocks();
+    loadData();
+  </script>
+</body>
+</html>

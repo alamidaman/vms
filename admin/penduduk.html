@@ -1,0 +1,1240 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102d4d">
+    <title>Pengurusan Penduduk | Alam Idaman</title>
+
+    <style>
+        :root {
+            --navy: #102d4d;
+            --blue: #245a91;
+            --green: #187044;
+            --red: #b42318;
+            --text: #1c2d40;
+            --muted: #65758a;
+            --background: #f3f6fa;
+            --border: #e1e8f0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background: var(--background);
+        }
+
+        a { text-decoration: none; }
+
+        .header {
+            background: var(--navy);
+            color: white;
+        }
+
+        .header-inner {
+            max-width: 1120px;
+            margin: auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 66px;
+            height: 66px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .brand h1 {
+            font-size: 23px;
+            margin: 0 0 5px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            margin: 0;
+            color: #d6e4f2;
+            font-size: 13px;
+            letter-spacing: .5px;
+        }
+
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255,255,255,.55);
+            border-radius: 10px;
+            color: white;
+            background: rgba(255,255,255,.10);
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .banner {
+            position: relative;
+            height: 260px;
+            overflow: hidden;
+            background: #183c60;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(
+                90deg,
+                rgba(8,29,52,.76),
+                rgba(8,29,52,.22)
+            );
+        }
+
+        .banner-content {
+            color: white;
+            max-width: 760px;
+        }
+
+        .banner-content h2 {
+            font-size: clamp(28px,4vw,43px);
+            margin: 0 0 12px;
+        }
+
+        .banner-content p {
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1120px;
+            margin: auto;
+            padding: 35px 24px 45px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-heading h2 {
+            color: var(--navy);
+            font-size: 27px;
+            margin: 0 0 10px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 26px rgba(16,45,77,.04);
+        }
+
+        .panel h3 {
+            color: var(--navy);
+            margin: 0 0 17px;
+            font-size: 19px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            min-width: 0;
+            padding: 12px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #b8d4f1;
+            border-color: var(--blue);
+        }
+
+        .search-row input { flex: 1; }
+
+        button {
+            border: 0;
+            border-radius: 8px;
+            padding: 12px 18px;
+            background: var(--blue);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: .55;
+            cursor: wait;
+        }
+
+        .btn-green { background: var(--green); }
+        .btn-light { background: #e8eef5; color: var(--navy); }
+        .btn-red { background: var(--red); }
+
+        .status-message {
+            margin-top: 14px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+            overflow-wrap: anywhere;
+        }
+
+        .status-message.error { color: var(--red); }
+        .status-message.success { color: var(--green); }
+
+        .table-wrap { overflow-x: auto; }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .pagination-info {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-controls button {
+            min-width: 38px;
+            padding: 9px 12px;
+            background: #e8eef5;
+            color: var(--navy);
+        }
+
+        .pagination-controls button.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        .pagination-controls button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .pagination-controls button {
+            min-height: 36px;
+            border: 1px solid #d6e0eb;
+            border-radius: 8px;
+            font-size: 12px;
+            transition: background .15s ease, transform .15s ease;
+        }
+        .pagination-controls button:not(:disabled):hover {
+            background: #d9e5f2;
+            transform: translateY(-1px);
+        }
+        .pagination-controls button.active {
+            border-color: var(--blue);
+        }
+        .pagination-controls .ellipsis {
+            color: var(--muted);
+            padding: 0 3px;
+            font-size: 14px;
+        }
+        .summary-heading {
+            display:flex;
+            align-items:flex-start;
+            justify-content:space-between;
+            flex-wrap:wrap;
+            gap:14px;
+            margin-bottom:14px;
+        }
+        .summary-heading h3 { margin:0 0 6px; }
+        .summary-heading p { margin:0; color:var(--muted); font-size:13px; line-height:1.5; }
+        .summary-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        #whatsappSummary {
+            display:block;
+            width:100%;
+            min-height:190px;
+            resize:vertical;
+            padding:13px;
+            border:1px solid #cbd5e1;
+            border-radius:9px;
+            background:#f8fafc;
+            color:var(--text);
+            font:13px/1.65 Arial,Helvetica,sans-serif;
+            white-space:pre-wrap;
+        }
+        @media(max-width:760px) {
+            .pagination { justify-content:center; }
+            .pagination-info { width:100%; text-align:center; }
+            .pagination-controls { justify-content:center; width:100%; }
+            .summary-actions { width:100%; }
+            .summary-actions button { flex:1; }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #edf0f4;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            color: var(--navy);
+            background: #f5f8fc;
+            white-space: nowrap;
+        }
+
+        td { overflow-wrap: anywhere; }
+
+        .unit {
+            font-weight: bold;
+            color: var(--navy);
+            white-space: nowrap;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            background: #edf1f5;
+            color: #475569;
+        }
+
+        .badge.paid, .badge.valid {
+            background: #e2f5e9;
+            color: #187044;
+        }
+
+        .badge.temp {
+            background: #fff0d5;
+            color: #895900;
+        }
+
+        .badge.not-paid {
+            background: #fee4e2;
+            color: #b42318;
+        }
+
+        .edit-btn {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .empty {
+            padding: 24px 10px;
+            text-align: center;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--navy);
+        }
+
+        .readonly {
+            background: #edf1f5;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .help {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .footer {
+            background: var(--navy);
+            color: #d5e2ef;
+            text-align: center;
+            padding: 23px 18px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .footer strong { color: white; }
+
+        @media (max-width: 760px) {
+            .header-inner {
+                flex-wrap: wrap;
+                padding: 15px 16px;
+            }
+
+            .logo {
+                width: 54px;
+                height: 54px;
+            }
+
+            .brand h1 { font-size: 19px; }
+            .brand p { font-size: 10px; }
+
+            .header-actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .header-btn { flex: 1; }
+
+            .banner { height: 220px; }
+
+            .container { padding: 27px 13px 35px; }
+
+            .section-heading h2 { font-size: 23px; }
+
+            .panel { padding: 16px; }
+
+            .search-row { flex-direction: column; }
+            .search-row button { width: 100%; }
+
+            .form-grid { grid-template-columns: 1fr; }
+
+            .table-wrap table { min-width: 920px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <img src="../logo.png" alt="Logo Alam Idaman" class="logo">
+
+        <div class="brand">
+            <h1>ALAM IDAMAN</h1>
+            <p>PORTAL PENDAFTARAN PELAWAT</p>
+        </div>
+
+        <div class="header-actions">
+            <a class="header-btn" href="dashboard.html">← DASHBOARD</a>
+            <button class="header-btn" id="logout" type="button">
+                🔐 LOG KELUAR
+            </button>
+        </div>
+    </div>
+</header>
+
+<section class="banner">
+    <img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman">
+    <div class="banner-overlay">
+        <div class="banner-content">
+            <h2>Pengurusan Penduduk</h2>
+            <p>
+                Carian, semakan dan kemas kini maklumat penduduk
+                Alam Idaman.
+            </p>
+        </div>
+    </div>
+</section>
+
+<main class="container">
+
+    <div class="section-heading">
+        <h2>Senarai Penduduk</h2>
+        <p>Data daripada Google Sheets — tab Residents.</p>
+    </div>
+
+    <section class="panel">
+        <h3>🔎 Carian Penduduk</h3>
+
+        <form id="searchForm" class="search-row">
+            <input
+                id="searchInput"
+                type="search"
+                placeholder="Cari unit, nama, telefon, email atau sewa parking..."
+                autocomplete="off"
+            >
+            <button id="searchButton" type="submit">CARI</button>
+            <button id="resetButton" type="button" class="btn-light">RESET</button>
+        </form>
+
+        <div id="searchStatus" class="status-message">
+            Sedang mengesahkan sesi login...
+        </div>
+    </section>
+
+    <section class="panel">
+        <h3>Rekod Penduduk</h3>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Unit Rumah</th>
+                        <th>Nama Penuh</th>
+                        <th>Email Address</th>
+                        <th>No. Telefon</th>
+                        <th>Sewa Parking</th>
+                        <th>Penambahan Bayaran (RM)</th>
+                        <th>Maintenance</th>
+                        <th>OH Status</th>
+                        <th>Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsBody">
+                    <tr>
+                        <td colspan="8" class="empty">
+                            Memuatkan rekod...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <div id="paginationInfo" class="pagination-info">Memuatkan rekod...</div>
+            <div class="pagination-controls" id="paginationControls" aria-label="Navigasi halaman"></div>
+        </div>
+
+        <div id="resultCount" class="status-message"></div>
+    </section>
+
+    <section class="panel" id="whatsappPanel" hidden>
+        <div class="summary-heading">
+            <div>
+                <h3>📋 Ringkasan WhatsApp</h3>
+                <p>Ringkasan penduduk berdasarkan rekod carian semasa.</p>
+            </div>
+            <div class="summary-actions">
+                <button type="button" id="copySummaryButton" class="btn-green">SALIN UNTUK WHATSAPP</button>
+            </div>
+        </div>
+        <textarea id="whatsappSummary" rows="10" readonly
+            placeholder="Ringkasan akan dipaparkan selepas data penduduk dimuatkan."></textarea>
+        <div id="summaryStatus" class="status-message"></div>
+    </section>
+
+    <section class="panel" id="editPanel" hidden>
+        <h3>✏️ Edit Maklumat Penduduk</h3>
+
+        <form id="editForm">
+            <input type="hidden" id="editRow">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="editUnit">Unit Rumah (Tidak boleh diubah)</label>
+                    <input id="editUnit" class="readonly" readonly>
+                    <div class="help">
+                        Unit rumah dikunci. Perubahan hanya dibuat
+                        pada maklumat lain.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editName">Nama Penuh *</label>
+                    <input id="editName" maxlength="150" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editEmail">Email Address</label>
+                    <input id="editEmail" type="email" maxlength="200">
+                </div>
+
+                <div class="form-group">
+                    <label for="editPhone">No. Telefon</label>
+                    <input id="editPhone" type="tel" maxlength="30">
+                </div>
+
+                <div class="form-group">
+                    <label for="editSewaParking">Sewa Parking (Jumlah)</label>
+                    <input id="editSewaParking" type="number" min="0" step="1" value="0"
+                        inputmode="numeric" placeholder="0">
+                    <div class="help">Masukkan jumlah parking sewa. Kosong dikira 0.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editExtraPayment">Penambahan Bayaran (RM)</label>
+                    <input id="editExtraPayment" type="number" min="0" step="0.01" value="0"
+                        inputmode="decimal" placeholder="0.00">
+                    <div class="help">Bayaran tambahan berasingan daripada sewa parking. Kosong dikira RM0.00.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editMaintenance">Maintenance Status *</label>
+                    <select id="editMaintenance" required>
+                        <option value="PAID">PAID</option>
+                        <option value="TEMP">TEMP</option>
+                        <option value="NOT PAID">NOT PAID</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editOH">OH Status</label>
+                    <select id="editOH">
+                        <option value="">Kosong</option>
+                        <option value="VALID">VALID</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div id="editStatus" class="status-message"></div>
+
+            <div class="form-actions">
+                <button id="saveButton" type="submit" class="btn-green">
+                    SIMPAN PERUBAHAN
+                </button>
+                <button id="cancelButton" type="button" class="btn-light">
+                    BATAL
+                </button>
+            </div>
+        </form>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <strong>ALAM IDAMAN</strong><br>
+    Visitor Management System (VMS)<br>
+    Sila pastikan semua maklumat penduduk adalah tepat.
+</footer>
+
+<script>
+    const API_URL =
+        'https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
+
+    const LOGIN_API_URL =
+        'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+
+    const LOGIN_URL =
+        'https://alamidaman.github.io/alam-idaman-qr-scanner/admin/';
+
+    const TOKEN_KEY = 'PPAI_SESSION_TOKEN';
+
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const searchStatus = document.getElementById('searchStatus');
+    const recordsBody = document.getElementById('recordsBody');
+    const resultCount = document.getElementById('resultCount');
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationControls = document.getElementById('paginationControls');
+    const whatsappPanel = document.getElementById('whatsappPanel');
+    const whatsappSummary = document.getElementById('whatsappSummary');
+    const summaryStatus = document.getElementById('summaryStatus');
+
+    const PAGE_SIZE = 12;
+    let currentPage = 1;
+
+    const editPanel = document.getElementById('editPanel');
+    const editForm = document.getElementById('editForm');
+    const editStatus = document.getElementById('editStatus');
+    const saveButton = document.getElementById('saveButton');
+
+    let sessionValid = false;
+    let currentRecords = [];
+
+    function getToken() {
+        return sessionStorage.getItem(TOKEN_KEY) || '';
+    }
+
+    function setMessage(element, message, type = '') {
+        element.textContent = message;
+        element.className = 'status-message' + (type ? ' ' + type : '');
+    }
+
+    function jsonpRequest(params, timeoutMs = 20000) {
+        return new Promise(function (resolve, reject) {
+            const callbackName =
+                'residentCb_' + Date.now() + '_' +
+                Math.random().toString(36).slice(2);
+
+            const script = document.createElement('script');
+            const url = new URL(API_URL);
+
+            Object.entries(params).forEach(function ([key, value]) {
+                url.searchParams.set(key, String(value));
+            });
+
+            url.searchParams.set('callback', callbackName);
+
+            let finished = false;
+
+            const timer = setTimeout(function () {
+                finish(new Error('Sambungan tamat masa. Sila cuba lagi.'));
+            }, timeoutMs);
+
+            function finish(error, data) {
+                if (finished) return;
+                finished = true;
+
+                clearTimeout(timer);
+                delete window[callbackName];
+                script.remove();
+
+                if (error) reject(error);
+                else resolve(data);
+            }
+
+            window[callbackName] = function (data) {
+                finish(null, data);
+            };
+
+            script.onerror = function () {
+                finish(new Error(
+                    'API penduduk tidak dapat dihubungi. Semak URL dan deployment.'
+                ));
+            };
+
+            script.src = url.toString();
+            document.body.appendChild(script);
+        });
+    }
+
+    function jsonpLoginRequest(params, timeoutMs = 15000) {
+        return new Promise(function (resolve, reject) {
+            const callbackName =
+                'residentLoginCb_' + Date.now() + '_' +
+                Math.random().toString(36).slice(2);
+
+            const script = document.createElement('script');
+            const url = new URL(LOGIN_API_URL);
+
+            Object.entries(params).forEach(function ([key, value]) {
+                url.searchParams.set(key, String(value));
+            });
+
+            url.searchParams.set('callback', callbackName);
+
+            let finished = false;
+
+            const timer = setTimeout(function () {
+                finish(new Error('Sesi login tidak dapat disahkan.'));
+            }, timeoutMs);
+
+            function finish(error, data) {
+                if (finished) return;
+                finished = true;
+
+                clearTimeout(timer);
+                delete window[callbackName];
+                script.remove();
+
+                if (error) reject(error);
+                else resolve(data);
+            }
+
+            window[callbackName] = function (data) {
+                finish(null, data);
+            };
+
+            script.onerror = function () {
+                finish(new Error('Backend login tidak dapat dihubungi.'));
+            };
+
+            script.src = url.toString();
+            document.body.appendChild(script);
+        });
+    }
+
+    function redirectToLogin(message) {
+        sessionStorage.removeItem(TOKEN_KEY);
+
+        if (message) {
+            sessionStorage.setItem('PPAI_LOGIN_NOTICE', message);
+        }
+
+        window.location.replace(LOGIN_URL);
+    }
+
+    async function verifySession() {
+        const token = getToken();
+
+        if (!token) {
+            redirectToLogin('Sila log masuk untuk meneruskan.');
+            return false;
+        }
+
+        try {
+            const result = await jsonpLoginRequest({
+                action: 'api',
+                task: 'me',
+                token: token
+            });
+
+            if (!result.success || !result.user) {
+                redirectToLogin('Sesi login tamat. Sila log masuk semula.');
+                return false;
+            }
+
+            sessionValid = true;
+            searchButton.disabled = false;
+            return true;
+
+        } catch (error) {
+            setMessage(
+                searchStatus,
+                'Gagal mengesahkan sesi login. Muat semula halaman untuk cuba lagi.',
+                'error'
+            );
+            return false;
+        }
+    }
+
+    function makeCell(text, className = '') {
+        const td = document.createElement('td');
+        td.textContent = text || '—';
+
+        if (className) td.className = className;
+        return td;
+    }
+
+    function makeBadge(value) {
+        const span = document.createElement('span');
+        span.className = 'badge';
+
+        const status = String(value || '').trim();
+
+        if (status === 'PAID') span.classList.add('paid');
+        else if (status === 'TEMP') span.classList.add('temp');
+        else if (status === 'NOT PAID') span.classList.add('not-paid');
+        else if (status === 'VALID') span.classList.add('valid');
+
+        span.textContent = status || '—';
+        return span;
+    }
+
+    function renderRecords(records) {
+        currentRecords = Array.isArray(records) ? records : [];
+        if (searchInput.value.trim() && currentRecords.length) {
+            whatsappPanel.hidden = false;
+            generateWhatsAppSummary();
+        } else {
+            whatsappPanel.hidden = true;
+            whatsappSummary.value = '';
+            summaryStatus.textContent = '';
+        }
+
+        const totalRecords = currentRecords.length;
+        const totalPages = Math.max(1, Math.ceil(totalRecords / PAGE_SIZE));
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIndex = (currentPage - 1) * PAGE_SIZE;
+        const pageRecords = currentRecords.slice(startIndex, startIndex + PAGE_SIZE);
+
+        recordsBody.replaceChildren();
+
+        if (!totalRecords) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 9;
+            td.className = 'empty';
+            td.textContent = 'Tiada rekod penduduk ditemui.';
+            tr.appendChild(td);
+            recordsBody.appendChild(tr);
+
+            paginationInfo.textContent = '0 rekod';
+            paginationControls.replaceChildren();
+            resultCount.textContent = '0 rekod ditemui.';
+            return;
+        }
+
+        pageRecords.forEach(function (record) {
+            const tr = document.createElement('tr');
+
+            tr.appendChild(makeCell(record.unit, 'unit'));
+            tr.appendChild(makeCell(record.name));
+            tr.appendChild(makeCell(record.email));
+            tr.appendChild(makeCell(record.phone));
+            tr.appendChild(makeCell(
+                Math.max(0, parseInt(record.sewaParking, 10) || 0).toString()
+            ));
+            tr.appendChild(makeCell(
+                (Math.max(0, Number(record.extraPayment) || 0)).toFixed(2)
+            ));
+
+            const maintenanceCell = document.createElement('td');
+            maintenanceCell.appendChild(makeBadge(record.maintenanceStatus));
+            tr.appendChild(maintenanceCell);
+
+            const ohCell = document.createElement('td');
+            ohCell.appendChild(makeBadge(record.ohStatus));
+            tr.appendChild(ohCell);
+
+            const actionCell = document.createElement('td');
+            const editButton = document.createElement('button');
+
+            editButton.type = 'button';
+            editButton.className = 'edit-btn';
+            editButton.textContent = 'EDIT';
+            editButton.addEventListener('click', function () {
+                openEdit(record);
+            });
+
+            actionCell.appendChild(editButton);
+            tr.appendChild(actionCell);
+
+            recordsBody.appendChild(tr);
+        });
+
+        const firstRecord = startIndex + 1;
+        const lastRecord = Math.min(startIndex + PAGE_SIZE, totalRecords);
+
+        paginationInfo.textContent =
+            'Memaparkan ' + firstRecord + '–' + lastRecord +
+            ' daripada ' + totalRecords + ' rekod';
+
+        resultCount.textContent =
+            totalRecords + ' rekod ditemui · Halaman ' +
+            currentPage + ' daripada ' + totalPages + '.';
+
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        paginationControls.replaceChildren();
+
+        if (totalPages <= 1) return;
+
+        const previousButton = document.createElement('button');
+        previousButton.type = 'button';
+        previousButton.textContent = '‹ Sebelum';
+        previousButton.disabled = currentPage === 1;
+        previousButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                renderRecords(currentRecords);
+            }
+        });
+        paginationControls.appendChild(previousButton);
+
+        // Nombor halaman terdekat dan ellipsis untuk pagination ringkas.
+        const pages = new Set([1, totalPages]);
+        for (let page = Math.max(1, currentPage - 2); page <= Math.min(totalPages, currentPage + 2); page++) pages.add(page);
+        const sortedPages = Array.from(pages).sort((a, b) => a - b);
+        let previousPage = 0;
+
+        sortedPages.forEach(function (page) {
+            if (previousPage && page - previousPage > 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'ellipsis';
+                ellipsis.textContent = '…';
+                paginationControls.appendChild(ellipsis);
+            }
+            const pageButton = document.createElement('button');
+            pageButton.type = 'button';
+            pageButton.textContent = String(page);
+            pageButton.className = page === currentPage ? 'active' : '';
+            pageButton.setAttribute('aria-label', 'Halaman ' + page);
+            if (page === currentPage) pageButton.setAttribute('aria-current', 'page');
+            pageButton.addEventListener('click', function () {
+                currentPage = page;
+                renderRecords(currentRecords);
+            });
+            paginationControls.appendChild(pageButton);
+            previousPage = page;
+        });
+
+        const nextButton = document.createElement('button');
+        nextButton.type = 'button';
+        nextButton.textContent = 'Seterusnya ›';
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.addEventListener('click', function () {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderRecords(currentRecords);
+            }
+        });
+        paginationControls.appendChild(nextButton);
+    }
+
+    function generateWhatsAppSummary() {
+        const records = currentRecords || [];
+        const lines = [];
+
+        records.forEach(function (record, index) {
+            if (index > 0) lines.push('', '');
+            lines.push(
+                '*MAKLUMAT TERKINI PENDUDUK*',
+                '*Unit Rumah:* ' + (record.unit || '—'),
+                '*Nama Penuh:* ' + (record.name || '—'),
+                '*Email Address:* ' + (record.email || '—'),
+                '*No. Telefon:* ' + (record.phone || '—'),
+                '*Sewa Parking:* ' + (Math.max(0, parseInt(record.sewaParking, 10) || 0)),
+                '*Penambahan Bayaran:* RM' + (Math.max(0, Number(record.extraPayment) || 0)).toFixed(2),
+                '*Maintenance:* ' + (record.maintenanceStatus || '—'),
+                '*OH Status:* ' + (record.ohStatus || '—')
+            );
+        });
+
+        whatsappSummary.value = lines.join('\n');
+        summaryStatus.textContent = records.length
+            ? 'Ringkasan carian (' + records.length + ' rekod).'
+            : 'Tiada rekod untuk diringkaskan.';
+        summaryStatus.className = 'status-message';
+    }
+
+    async function copyWhatsAppSummary() {
+        const text = whatsappSummary.value;
+        if (!text.trim()) {
+            setMessage(summaryStatus, 'Tiada ringkasan untuk disalin.', 'error');
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(text);
+            setMessage(summaryStatus, 'Ringkasan berjaya disalin. Anda boleh paste ke WhatsApp.', 'success');
+        } catch (error) {
+            whatsappSummary.focus();
+            whatsappSummary.select();
+            const copied = document.execCommand('copy');
+            setMessage(summaryStatus, copied
+                ? 'Ringkasan disalin. Anda boleh paste ke WhatsApp.'
+                : 'Sila pilih teks ringkasan dan salin secara manual.', copied ? 'success' : 'error');
+        }
+    }
+
+    async function searchResidents(query = '') {
+        if (!sessionValid) return;
+
+        currentPage = 1;
+        searchButton.disabled = true;
+        setMessage(searchStatus, 'Sedang mencari rekod...');
+        resultCount.textContent = '';
+
+        try {
+            const data = await jsonpRequest({
+                action: 'residentApi',
+                task: 'search',
+                token: getToken(),
+                q: query.trim()
+            });
+
+            if (!data.success) {
+                throw new Error(data.message || 'Carian gagal.');
+            }
+
+            renderRecords(data.records || []);
+
+            setMessage(
+                searchStatus,
+                'Carian selesai.',
+                'success'
+            );
+
+        } catch (error) {
+            setMessage(searchStatus, error.message, 'error');
+            renderRecords([]);
+        } finally {
+            searchButton.disabled = !sessionValid;
+        }
+    }
+
+    function openEdit(record) {
+        document.getElementById('editRow').value = record.row;
+        document.getElementById('editUnit').value = record.unit || '';
+        document.getElementById('editName').value = record.name || '';
+        document.getElementById('editEmail').value = record.email || '';
+        document.getElementById('editPhone').value = record.phone || '';
+        document.getElementById('editSewaParking').value =
+            Math.max(0, parseInt(record.sewaParking, 10) || 0);
+        document.getElementById('editExtraPayment').value =
+            Math.max(0, Number(record.extraPayment) || 0).toFixed(2);
+
+        document.getElementById('editMaintenance').value =
+            ['PAID', 'TEMP', 'NOT PAID'].includes(record.maintenanceStatus)
+                ? record.maintenanceStatus
+                : 'NOT PAID';
+
+        document.getElementById('editOH').value =
+            record.ohStatus === 'VALID' ? 'VALID' : '';
+
+        setMessage(editStatus, '');
+        editPanel.hidden = false;
+
+        editPanel.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+    function closeEdit() {
+        editPanel.hidden = true;
+        editForm.reset();
+        setMessage(editStatus, '');
+    }
+
+    editForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        if (!sessionValid) {
+            redirectToLogin('Sila login semula.');
+            return;
+        }
+
+        saveButton.disabled = true;
+        setMessage(editStatus, 'Sedang menyimpan perubahan...');
+
+        const payload = {
+            action: 'residentApi',
+            task: 'save',
+            token: getToken(),
+            row: document.getElementById('editRow').value,
+            name: document.getElementById('editName').value.trim(),
+            email: document.getElementById('editEmail').value.trim(),
+            phone: document.getElementById('editPhone').value.trim(),
+            sewaParking: Math.max(0, parseInt(document.getElementById('editSewaParking').value, 10) || 0),
+            extraPayment: Math.max(0, Number(document.getElementById('editExtraPayment').value) || 0),
+            maintenanceStatus:
+                document.getElementById('editMaintenance').value,
+            ohStatus: document.getElementById('editOH').value
+        };
+
+        try {
+            const data = await jsonpRequest(payload);
+
+            if (!data.success) {
+                throw new Error(data.message || 'Gagal menyimpan rekod.');
+            }
+
+            setMessage(editStatus, data.message, 'success');
+
+            await searchResidents(searchInput.value);
+
+            // Tutup borang selepas rekod berjaya disimpan.
+            closeEdit();
+
+            setMessage(
+                searchStatus,
+                data.message || 'Maklumat berjaya dikemas kini.',
+                'success'
+            );
+
+        } catch (error) {
+            setMessage(editStatus, error.message, 'error');
+        } finally {
+            saveButton.disabled = false;
+        }
+    });
+
+    searchForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        searchResidents(searchInput.value);
+    });
+
+    document.getElementById('cancelButton').addEventListener(
+        'click',
+        closeEdit
+    );
+
+    document.getElementById('logout').addEventListener(
+        'click',
+        async function () {
+            const token = getToken();
+
+            sessionStorage.removeItem(TOKEN_KEY);
+            sessionValid = false;
+
+            if (token) {
+                try {
+                    await jsonpLoginRequest({
+                        action: 'api',
+                        task: 'logout',
+                        token: token
+                    }, 5000);
+                } catch (error) {
+                    // Token setempat sudah dipadam.
+                }
+            }
+
+            window.location.replace(LOGIN_URL);
+        }
+    );
+
+    document.getElementById('resetButton').addEventListener('click', function () {
+        searchInput.value = '';
+        searchResidents('');
+    });
+    document.getElementById('copySummaryButton').addEventListener('click', copyWhatsAppSummary);
+
+    async function initPage() {
+        searchButton.disabled = true;
+
+        const valid = await verifySession();
+
+        if (valid) {
+            setMessage(searchStatus, 'Sesi login disahkan.', 'success');
+            await searchResidents('');
+        }
+    }
+
+    initPage();
+</script>
+
+</body>
+</html>
