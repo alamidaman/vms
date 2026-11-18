@@ -640,11 +640,11 @@
 
                 if (record.recordType === 'Pelawat Biasa') {
                     addField(body, 'Nama Pelawat', record.visitorName);
+                    addField(body, 'Tarikh Daftar', record.registerDate);
                 }
 
                 addField(body, 'Nama Owner', record.ownerName);
-                addField(body, 'Phone Owner', record.ownerPhone);
-                addField(body, 'Tarikh Daftar', record.registerDate);
+                addField(body, 'Phone Owner', record.ownerPhone);                
                 addField(body, 'No. Plate', record.plate);
                 addField(body, 'Jenis Kenderaan', record.vehicleType);
 
