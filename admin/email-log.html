@@ -19,7 +19,7 @@
 input,select{width:100%;min-width:0;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:var(--text);font-size:14px}
 button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.btn-green{background:var(--green)}.btn-light{background:#e8eef5;color:var(--navy)}
 .status-message{margin-top:12px;font-size:13px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}.status-message.error{color:var(--red)}.status-message.success{color:var(--green)}
-.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:1450px}th,td{padding:12px 11px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:middle}th{color:var(--navy);background:#f5f8fc;white-space:nowrap}td{overflow-wrap:anywhere}.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap}.status-sent{background:#e2f5e9;color:#187044}.status-failed{background:#fde5e5;color:#c62828}.status-unknown{background:#edf2f7;color:#64748b}.time-value{font-weight:700;white-space:nowrap}.time-slow{color:var(--amber)}.empty{padding:24px 10px;text-align:center;color:var(--muted);line-height:1.7}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:1650px}th,td{padding:12px 11px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:middle}th{color:var(--navy);background:#f5f8fc;white-space:nowrap}td{overflow-wrap:anywhere}.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap}.status-sent{background:#e2f5e9;color:#187044}.status-failed{background:#fde5e5;color:#c62828}.status-unknown{background:#edf2f7;color:#64748b}.time-value{font-weight:700;white-space:nowrap}.time-slow{color:var(--amber)}.empty{padding:24px 10px;text-align:center;color:var(--muted);line-height:1.7}
 .pagination{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:18px}.pagination button{min-width:38px;min-height:36px;padding:8px 11px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:var(--navy);font-size:12px}.pagination button.active{background:var(--blue);border-color:var(--blue);color:#fff}.pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination-info{width:100%;margin-top:3px;text-align:center;color:var(--muted);font-size:12px}
 .footer{background:var(--navy);color:#d5e2ef;text-align:center;padding:23px 18px;font-size:12px;line-height:1.8}.footer strong{color:white}
 @media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-grid button{width:100%}}
@@ -51,8 +51,8 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
 
 <section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 style="margin:0">Senarai Rekod Email</h3><span id="recordCount" class="status-message" style="margin:0"></span></div>
 <div class="table-wrap"><table><thead><tr>
-<th>Tarikh & Masa</th><th>Jenis Email</th><th>Visitor ID</th><th>Unit Rumah</th><th>Email Penerima</th><th>Subject</th><th>Status</th><th>Mesej Ralat</th><th>Send Started At</th><th>Send Completed At</th><th>Processing Time</th>
-</tr></thead><tbody id="rows"><tr><td colspan="11" class="empty">Memuatkan rekod email...</td></tr></tbody></table></div>
+<th>Tarikh & Masa</th><th>Jenis Email</th><th>Unit Rumah</th><th>Email Penerima</th><th>Status</th><th>Send Completed At</th><th>QR Url</th><th>Subject</th><th>Send Started At</th><th>Processing Time</th><th>Mesej Ralat</th><th>Visitor ID</th>
+</tr></thead><tbody id="rows"><tr><td colspan="12" class="empty">Memuatkan rekod email...</td></tr></tbody></table></div>
 <div id="pagination" class="pagination" aria-label="Navigasi halaman email log"></div><div id="count" class="status-message"></div>
 <div class="status-message">Nota: Processing Time mengukur tempoh MailApp.sendEmail() berjalan dalam Apps Script, bukan masa email tiba di Inbox penerima.</div>
 </section>
@@ -164,17 +164,18 @@ function render(){
     return `<tr>
       <td>${esc(record.timestamp||'—')}</td>
       <td>${esc(record.emailType||'—')}</td>
-      <td><b>${esc(record.visitorId||'—')}</b></td>
       <td>${esc(record.unit||'—')}</td>
       <td>${esc(record.recipientEmail||'—')}</td>
-      <td>${esc(record.subject||'—')}</td>
       <td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td>
-      <td>${esc(record.errorMessage||'—')}</td>
-      <td>${esc(record.sendStartedAt||'—')}</td>
       <td>${esc(record.sendCompletedAt||'—')}</td>
+      <td>${record.qrUrl ? `<a href="${esc(record.qrUrl)}" target="_blank" rel="noopener noreferrer">Lihat QR</a>` : '—'}</td>
+      <td>${esc(record.subject||'—')}</td>
+      <td>${esc(record.sendStartedAt||'—')}</td>
       <td class="time-value ${processingClass}">${formatProcessingTime(record.processingTime)}</td>
+      <td>${esc(record.errorMessage||'—')}</td>
+      <td><b>${esc(record.visitorId||'—')}</b></td>
     </tr>`;
-  }).join(''):'<tr><td colspan="11" class="empty">Tiada rekod email ditemui.</td></tr>';
+  }).join(''):'<tr><td colspan="12" class="empty">Tiada rekod email ditemui.</td></tr>';
 
   $('count').textContent=total
     ?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod.`
@@ -208,7 +209,7 @@ function render(){
 
 async function search(){
   message('Sedang mendapatkan rekod email...');
-  $('rows').innerHTML='<tr><td colspan="11" class="empty">Memuatkan rekod...</td></tr>';
+  $('rows').innerHTML='<tr><td colspan="12" class="empty">Memuatkan rekod...</td></tr>';
   $('pagination').innerHTML='';
 
   const result=await api('search',{
