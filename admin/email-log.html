@@ -298,7 +298,10 @@ $('logout').onclick=async()=>{
       return;
     }
 
-    await Promise.all([refreshQuota(),search()]);
+    // Panggil API secara berturutan untuk mengelakkan dua request
+    // ke Apps Script berjalan serentak ketika halaman mula dibuka.
+    await refreshQuota();
+    await search();
   }catch(error){
     message(error.message,'error');
   }
