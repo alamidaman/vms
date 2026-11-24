@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#102d4d">
+    <title>Semakan Kenderaan Penduduk | Alam Idaman</title>
+
+    <style>
+        :root {
+            --navy: #102d4d;
+            --blue: #245a91;
+            --green: #187044;
+            --text: #1c2d40;
+            --muted: #65758a;
+            --background: #f3f6fa;
+            --border: #e1e8f0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text);
+            background: var(--background);
+        }
+
+        /* HEADER SAMA SEPERTI PORTAL ALAM IDAMAN */
+        .header {
+            background: var(--navy);
+            color: white;
+        }
+
+        .header-inner {
+            max-width: 1120px;
+            margin: auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 66px;
+            height: 66px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .brand h1 {
+            font-size: 23px;
+            margin: 0 0 5px;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            margin: 0;
+            color: #d6e4f2;
+            font-size: 13px;
+            letter-spacing: .5px;
+        }
+
+        /* BANNER */
+        .banner {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            background: #183c60;
+        }
+
+        .banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .banner-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(
+                90deg,
+                rgba(8,29,52,.76),
+                rgba(8,29,52,.22)
+            );
+        }
+
+        .banner-content {
+            color: white;
+            max-width: 760px;
+        }
+
+        .banner-content h2 {
+            font-size: clamp(28px,4vw,43px);
+            margin: 0 0 14px;
+            line-height: 1.2;
+        }
+
+        .banner-content p {
+            font-size: 16px;
+            line-height: 1.7;
+            margin: 0;
+            color: #f0f5fb;
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 38px 24px 44px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 10px;
+            font-size: 27px;
+            color: var(--navy);
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 26px rgba(16,45,77,.05);
+        }
+
+        .panel h3 {
+            margin: 0 0 18px;
+            color: var(--navy);
+            font-size: 19px;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            color: var(--navy);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(36,90,145,.12);
+        }
+
+        .captcha-wrap {
+            margin: 18px 0;
+            min-height: 78px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            width: 100%;
+            padding: 13px 20px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover { filter: brightness(1.08); }
+
+        .button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .hint {
+            margin: 13px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .status {
+            display: none;
+            margin-top: 18px;
+            padding: 13px 15px;
+            border-radius: 9px;
+            background: #eef4fa;
+            color: var(--navy);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .status.show { display: block; }
+        .status.error {
+            background: #fff0f0;
+            color: #9b1c1c;
+        }
+        .status.success {
+            background: #eaf7ef;
+            color: #17633a;
+        }
+
+        .results-panel {
+            display: none;
+            margin-top: 22px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 26px rgba(16,45,77,.04);
+        }
+
+        .results-panel.show { display: block; }
+
+        .results-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .results-top h3 {
+            margin: 0;
+            color: var(--navy);
+            font-size: 19px;
+        }
+
+        .count {
+            padding: 7px 11px;
+            border-radius: 20px;
+            background: #eaf2fa;
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .resident-info {
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .resident-info strong {
+            display: block;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+
+        .resident-info span {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 620px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 13px 14px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        th {
+            background: #eaf2fa;
+            color: var(--navy);
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        tbody tr:last-child td { border-bottom: 0; }
+
+        .plate {
+            color: var(--navy);
+            font-weight: bold;
+            letter-spacing: .4px;
+            white-space: nowrap;
+        }
+
+        .category {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 6px;
+            background: #edf4fb;
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .empty {
+            padding: 25px 12px;
+            text-align: center;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: var(--navy);
+            color: #d5e2ef;
+            text-align: center;
+            padding: 23px 18px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .footer strong { color: white; }
+
+        @media (max-width: 650px) {
+            .header-inner {
+                padding: 15px 18px;
+                gap: 12px;
+            }
+
+            .logo {
+                width: 54px;
+                height: 54px;
+            }
+
+            .brand h1 { font-size: 19px; }
+
+            .brand p {
+                font-size: 11px;
+                line-height: 1.5;
+            }
+
+            .banner { height: 230px; }
+            .banner-content h2 { font-size: 29px; }
+            .banner-content p { font-size: 14px; }
+            .container { padding: 30px 14px; }
+            .section-heading h2 { font-size: 23px; }
+            .panel, .results-panel { padding: 18px; }
+            .captcha-wrap { overflow-x: auto; }
+        }
+    </style>
+
+    <script>
+        // Callback dipanggil apabila Google reCAPTCHA selesai dimuatkan.
+        window.onloadRecaptcha = function () {
+            if (!window.grecaptcha || !document.getElementById('captcha')) return;
+
+            window.captchaWidgetId = grecaptcha.render('captcha', {
+                sitekey: 'MASUKKAN_RECAPTCHA_SITE_KEY',
+                theme: 'light'
+            });
+        };
+    </script>
+    <script
+        src="https://www.google.com/recaptcha/api.js?onload=onloadRecaptcha&render=explicit"
+        async
+        defer
+    ></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-inner">
+            <img src="logo.png" alt="Logo Alam Idaman" class="logo">
+
+            <div class="brand">
+                <h1>ALAM IDAMAN</h1>
+                <p>PORTAL PENDAFTARAN PELAWAT</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- BANNER -->
+    <section class="banner">
+        <img src="banner.jpg" alt="Kawasan perumahan Alam Idaman">
+
+        <div class="banner-overlay">
+            <div class="banner-content">
+                <h2>Semakan Kenderaan Penduduk</h2>
+                <p>
+                    Semak senarai nombor pendaftaran kenderaan
+                    yang telah didaftarkan di Alam Idaman.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="container">
+
+        <div class="section-heading">
+            <h2>Semakan No. Plat</h2>
+            <p>Masukkan e-mel yang digunakan semasa pendaftaran kenderaan.</p>
+        </div>
+
+        <section class="panel">
+            <h3>🔎 Maklumat Semakan</h3>
+
+            <form id="searchForm">
+                <div class="form-group">
+                    <label for="email">Email Address Berdaftar</label>
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Contoh: nama@email.com"
+                        autocomplete="email"
+                        maxlength="254"
+                        required
+                    >
+                </div>
+
+                <div class="captcha-wrap">
+                    <div id="captcha"></div>
+                </div>
+
+                <button class="button" id="searchButton" type="submit">
+                    SEMAK SENARAI KENDERAAN
+                </button>
+            </form>
+
+            <p class="hint">
+                Sila gunakan e-mel yang direkodkan dalam sistem PPAI.
+                Pengesahan CAPTCHA diperlukan untuk mengurangkan carian automatik.
+            </p>
+
+            <div class="status" id="status" role="status" aria-live="polite"></div>
+        </section>
+
+        <section class="results-panel" id="resultsPanel">
+            <div class="results-top">
+                <h3>Senarai Kenderaan Berdaftar</h3>
+                <span class="count" id="recordCount">0 rekod</span>
+            </div>
+
+            <div id="residentInfo"></div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bil.</th>
+                            <th>Kategori</th>
+                            <th>Jenis Kenderaan</th>
+                            <th>No. Plate</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <strong>ALAM IDAMAN</strong><br>
+        Visitor Management System (VMS)<br>
+        Sila pastikan semua maklumat pendaftaran adalah tepat.
+    </footer>
+
+    <script>
+        // URL Apps Script yang digunakan oleh API Alam Idaman sedia ada.
+        const API_URL =
+            'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+
+        const form = document.getElementById('searchForm');
+        const emailInput = document.getElementById('email');
+        const searchButton = document.getElementById('searchButton');
+        const statusBox = document.getElementById('status');
+        const resultsPanel = document.getElementById('resultsPanel');
+        const recordsBody = document.getElementById('recordsBody');
+        const residentInfo = document.getElementById('residentInfo');
+        const recordCount = document.getElementById('recordCount');
+
+        function setStatus(message, type) {
+            statusBox.textContent = message;
+            statusBox.className = 'status show' + (type ? ' ' + type : '');
+        }
+
+        function jsonpRequest(baseUrl, params, timeoutMs) {
+            return new Promise(function (resolve, reject) {
+                const callbackName =
+                    'ppaiSemakan_' + Date.now() + '_' +
+                    Math.random().toString(36).slice(2);
+
+                const script = document.createElement('script');
+                const url = new URL(baseUrl);
+
+                Object.entries(params).forEach(function (entry) {
+                    url.searchParams.set(entry[0], entry[1]);
+                });
+
+                url.searchParams.set('callback', callbackName);
+
+                let finished = false;
+
+                const timer = setTimeout(function () {
+                    finish(new Error('Sambungan tamat masa. Sila cuba semula.'));
+                }, timeoutMs || 20000);
+
+                function finish(error, data) {
+                    if (finished) return;
+
+                    finished = true;
+                    clearTimeout(timer);
+                    delete window[callbackName];
+                    script.remove();
+
+                    if (error) reject(error);
+                    else resolve(data);
+                }
+
+                window[callbackName] = function (data) {
+                    finish(null, data);
+                };
+
+                script.onerror = function () {
+                    finish(new Error('Backend tidak dapat dihubungi. Sila cuba lagi.'));
+                };
+
+                script.src = url.toString();
+                document.body.appendChild(script);
+            });
+        }
+
+        function clearResults() {
+            resultsPanel.classList.remove('show');
+            recordsBody.replaceChildren();
+            residentInfo.replaceChildren();
+            recordCount.textContent = '0 rekod';
+        }
+
+        function addResidentInfo(resident) {
+            const box = document.createElement('div');
+            box.className = 'resident-info';
+
+            const name = document.createElement('strong');
+            name.textContent = resident.name || 'Penduduk';
+
+            const unit = document.createElement('span');
+            unit.textContent = 'Unit Rumah: ' + (resident.unit || '—');
+
+            box.append(name, unit);
+            residentInfo.appendChild(box);
+        }
+
+        function renderRecords(data) {
+            clearResults();
+
+            const residents = Array.isArray(data.residents) ? data.residents : [];
+            const records = Array.isArray(data.records) ? data.records : [];
+
+            residents.forEach(addResidentInfo);
+
+            if (!records.length) {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 4;
+                cell.className = 'empty';
+                cell.textContent = 'Tiada nombor plat berdaftar ditemui untuk e-mel ini.';
+                row.appendChild(cell);
+                recordsBody.appendChild(row);
+            } else {
+                records.forEach(function (record, index) {
+                    const row = document.createElement('tr');
+
+                    const numberCell = document.createElement('td');
+                    numberCell.textContent = String(index + 1);
+
+                    const categoryCell = document.createElement('td');
+                    const category = document.createElement('span');
+                    category.className = 'category';
+                    category.textContent = record.category || '—';
+                    categoryCell.appendChild(category);
+
+                    const typeCell = document.createElement('td');
+                    typeCell.textContent = record.vehicleType || '—';
+
+                    const plateCell = document.createElement('td');
+                    plateCell.className = 'plate';
+                    plateCell.textContent = record.plate || '—';
+
+                    row.append(numberCell, categoryCell, typeCell, plateCell);
+                    recordsBody.appendChild(row);
+                });
+            }
+
+            recordCount.textContent = records.length + ' rekod';
+            resultsPanel.classList.add('show');
+        }
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            clearResults();
+
+            const email = emailInput.value.trim().toLowerCase();
+
+            if (!email) {
+                setStatus('Sila masukkan e-mel berdaftar.', 'error');
+                return;
+            }
+
+            if (!window.grecaptcha || typeof window.captchaWidgetId === 'undefined') {
+                setStatus('CAPTCHA belum sedia. Sila muat semula halaman.', 'error');
+                return;
+            }
+
+            const captchaToken = grecaptcha.getResponse(window.captchaWidgetId);
+
+            if (!captchaToken) {
+                setStatus('Sila lengkapkan pengesahan CAPTCHA.', 'error');
+                return;
+            }
+
+            searchButton.disabled = true;
+            setStatus('Sedang menyemak rekod kenderaan...', '');
+
+            try {
+                const result = await jsonpRequest(API_URL, {
+                    action: 'semakanKenderaan',
+                    task: 'searchByEmail',
+                    email: email,
+                    captchaToken: captchaToken
+                }, 25000);
+
+                if (!result || result.success !== true) {
+                    throw new Error(
+                        result && result.message
+                            ? result.message
+                            : 'Semakan tidak berjaya.'
+                    );
+                }
+
+                renderRecords(result);
+
+                setStatus(
+                    'Semakan berjaya. Jumlah kenderaan dijumpai: ' +
+                    Number(result.total || 0) + '.',
+                    'success'
+                );
+
+            } catch (error) {
+                setStatus(error.message || 'Ralat semasa membuat semakan.', 'error');
+            } finally {
+                searchButton.disabled = false;
+                if (window.grecaptcha && typeof window.captchaWidgetId !== 'undefined') {
+                    grecaptcha.reset(window.captchaWidgetId);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
