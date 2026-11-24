@@ -41,6 +41,29 @@
             gap: 16px;
         }
 
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-left: auto;
+            padding: 10px 16px;
+            min-height: 42px;
+            border: 1px solid rgba(255,255,255,.45);
+            border-radius: 9px;
+            color: white;
+            background: rgba(255,255,255,.10);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: background .2s ease;
+        }
+
+        .home-button:hover {
+            background: rgba(255,255,255,.22);
+        }
+
         .logo {
             width: 66px;
             height: 66px;
@@ -360,6 +383,11 @@
                 gap: 12px;
             }
 
+            .home-button {
+                padding: 9px 11px;
+                font-size: 12px;
+            }
+
             .logo {
                 width: 54px;
                 height: 54px;
@@ -388,7 +416,7 @@
             if (!window.grecaptcha || !document.getElementById('captcha')) return;
 
             window.captchaWidgetId = grecaptcha.render('captcha', {
-                sitekey: 'MASUKKAN_RECAPTCHA_SITE_KEY',
+                sitekey: '6LfCmi8uAAAAAHbhaL1bT3dNOjIVIgvRMG6W4We5',
                 theme: 'light'
             });
         };
@@ -411,6 +439,10 @@
                 <h1>ALAM IDAMAN</h1>
                 <p>PORTAL PENDAFTARAN PELAWAT</p>
             </div>
+
+            <a href="./index.html" class="home-button" aria-label="Kembali ke halaman utama">
+                &#8962; Home
+            </a>
         </div>
     </header>
 
