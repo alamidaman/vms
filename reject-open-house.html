@@ -56,17 +56,19 @@
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
     let currentOpenHouse = null;
+    let currentToken = '';
 
     window.addEventListener('load', loadOpenHouse);
 
     function loadOpenHouse() {
       const params = new URLSearchParams(window.location.search);
       const id = (params.get('openHouseId') || '').trim().toUpperCase();
-      if (!id) {
+      currentToken = (params.get('token') || '').trim();
+      if (!id || !currentToken) {
         showMessage('Open House ID tidak dijumpai dalam link.', 'error');
         return;
       }
-      callApi('openhouse_detail', {openHouseId:id}, function(response) {
+      callApi('openhouse_detail', {openHouseId:id, token:currentToken}, function(response) {
         if (!response || !response.success || !response.openHouse) {
           showMessage(response && response.message ? response.message : 'Rekod Open House tidak dijumpai.', 'error');
           return;
@@ -134,7 +136,7 @@
       button.disabled = true;
       button.textContent = 'PROCESSING...';
 
-      callApi('rejectOpenHouse', {openHouseId:currentOpenHouse.openHouseId}, function(response) {
+      callApi('rejectOpenHouse', {openHouseId:currentOpenHouse.openHouseId, token:currentToken}, function(response) {
         if (response && response.success) {
           currentOpenHouse.status = 'REJECTED';
           displayOpenHouse();
