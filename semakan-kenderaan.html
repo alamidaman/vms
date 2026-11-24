@@ -41,27 +41,28 @@
             gap: 16px;
         }
 
+        /* HOME BUTTON - MENGIKUT GAYA BUTTON DI index.html */
         .home-button {
+            margin-left: auto;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-left: auto;
-            padding: 10px 16px;
-            min-height: 42px;
-            border: 1px solid rgba(255,255,255,.45);
-            border-radius: 9px;
+            min-height: 44px;
+            padding: 11px 18px;
+            border: 1px solid rgba(255, 255, 255, .55);
+            border-radius: 10px;
             color: white;
-            background: rgba(255,255,255,.10);
-            text-decoration: none;
+            background: rgba(255, 255, 255, .10);
             font-size: 13px;
             font-weight: bold;
             white-space: nowrap;
-            transition: background .2s ease;
+            text-decoration: none;
+            transition: background .2s;
         }
 
         .home-button:hover {
-            background: rgba(255,255,255,.22);
+            background: rgba(255, 255, 255, .20);
         }
 
         .logo {
@@ -383,9 +384,13 @@
                 gap: 12px;
             }
 
+            .header-inner {
+                flex-wrap: wrap;
+            }
+
             .home-button {
-                padding: 9px 11px;
-                font-size: 12px;
+                width: 100%;
+                margin-left: 0;
             }
 
             .logo {
@@ -441,7 +446,9 @@
             </div>
 
             <a href="./index.html" class="home-button" aria-label="Kembali ke halaman utama">
-                &#8962; Home
+                <span aria-hidden="true">🏠</span>
+                HOME
+                <span aria-hidden="true">→</span>
             </a>
         </div>
     </header>
