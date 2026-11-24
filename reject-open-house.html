@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alam Idaman - Reject Open House</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;padding:16px;font-family:Arial,sans-serif;background:#f5f6f8;color:#222}
+    .container{width:100%;max-width:520px;margin:0 auto}
+    .card{background:#fff;padding:20px;margin-bottom:15px;border-radius:14px;box-shadow:0 3px 15px rgba(0,0,0,.08)}
+    .header{text-align:center;padding:24px 18px}
+    .logo{display:block;width:95px;height:95px;object-fit:contain;margin:0 auto 12px}
+    .subtitle{color:#666;font-size:15px}
+    .title{font-size:23px;font-weight:bold;margin:8px 0}
+    .section-title{font-size:18px;font-weight:bold;margin-bottom:15px}
+    .status{padding:12px;margin-bottom:15px;border-radius:8px;text-align:center;font-size:19px;font-weight:bold;background:#d9ead3;color:#137333}
+    .status.rejected{background:#fce8e6;color:#c5221f}
+    .status.inactive{background:#fff3cd;color:#856404}
+    .detail-row{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid #eee}
+    .detail-label{color:#666;flex:0 0 42%}
+    .detail-value{font-weight:bold;text-align:right;word-break:break-word}
+    .message{padding:12px;margin-top:12px;border-radius:8px;text-align:center;background:#f1f3f4;font-size:14px;line-height:1.5}
+    .success{background:#d9ead3;color:#137333}.error{background:#fce8e6;color:#c5221f}.warning{background:#fff3cd;color:#856404}
+    button{width:100%;padding:14px;margin-top:16px;border:0;border-radius:8px;background:#d93025;color:#fff;font-size:16px;font-weight:bold;cursor:pointer}
+    button:disabled{background:#aaa;cursor:not-allowed}
+    .hidden{display:none!important}
+    .small-note{margin-top:12px;text-align:center;color:#777;font-size:12px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card header">
+      <img src="logo.png" alt="Alam Idaman" class="logo">
+      <div class="subtitle">Alam Idaman Open House VMS</div>
+      <div class="title">OPEN HOUSE CANCELLATION</div>
+    </div>
+
+    <div id="resultCard" class="card hidden">
+      <div class="section-title">Open House Information</div>
+      <div id="status" class="status">-</div>
+      <div class="detail-row"><div class="detail-label">Open House ID</div><div id="id" class="detail-value">-</div></div>
+      <div class="detail-row"><div class="detail-label">Nama Owner</div><div id="owner" class="detail-value">-</div></div>
+      <div class="detail-row"><div class="detail-label">Unit Rumah</div><div id="unit" class="detail-value">-</div></div>
+      <div class="detail-row"><div class="detail-label">No. Telefon</div><div id="phone" class="detail-value">-</div></div>
+      <div class="detail-row"><div class="detail-label">Tarikh Daftar</div><div id="registered" class="detail-value">-</div></div>
+      <div class="detail-row"><div class="detail-label">Tarikh Open House</div><div id="eventDate" class="detail-value">-</div></div>
+      <div id="recordMessage" class="message hidden"></div>
+      <button id="rejectBtn" type="button" onclick="rejectOpenHouse()">REJECT OPEN HOUSE</button>
+    </div>
+
+    <div id="globalMessage" class="message hidden"></div>
+    <div class="small-note">Alam Idaman Visitor Management System</div>
+  </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
+    let currentOpenHouse = null;
+
+    window.addEventListener('load', loadOpenHouse);
+
+    function loadOpenHouse() {
+      const params = new URLSearchParams(window.location.search);
+      const id = (params.get('openHouseId') || '').trim().toUpperCase();
+      if (!id) {
+        showMessage('Open House ID tidak dijumpai dalam link.', 'error');
+        return;
+      }
+      callApi('openhouse_detail', {openHouseId:id}, function(response) {
+        if (!response || !response.success || !response.openHouse) {
+          showMessage(response && response.message ? response.message : 'Rekod Open House tidak dijumpai.', 'error');
+          return;
+        }
+        currentOpenHouse = response.openHouse;
+        displayOpenHouse();
+      });
+    }
+
+    function displayOpenHouse() {
+      const oh = currentOpenHouse;
+      document.getElementById('resultCard').classList.remove('hidden');
+      document.getElementById('id').textContent = oh.openHouseId || '-';
+      document.getElementById('owner').textContent = oh.ownerName || '-';
+      document.getElementById('unit').textContent = oh.unit || '-';
+      document.getElementById('phone').textContent = oh.phone || '-';
+      document.getElementById('registered').textContent = oh.registeredAt || '-';
+      document.getElementById('eventDate').textContent = oh.eventDate || '-';
+
+      const status = document.getElementById('status');
+      const button = document.getElementById('rejectBtn');
+      const message = document.getElementById('recordMessage');
+      status.className = 'status';
+      message.className = 'message hidden';
+      button.disabled = false;
+      button.classList.remove('hidden');
+
+      if (oh.status === 'REJECTED') {
+        status.classList.add('rejected');
+        status.textContent = 'REJECTED';
+        showRecordMessage('Pendaftaran Open House ini telah dibatalkan sebelum ini.', 'error');
+        button.disabled = true;
+        button.textContent = 'OPEN HOUSE REJECTED';
+      } else if (oh.status !== 'ACTIVE') {
+        status.classList.add('inactive');
+        status.textContent = oh.status || 'INACTIVE';
+        showRecordMessage('Pendaftaran ini tidak lagi aktif dan tidak boleh dibatalkan melalui halaman ini.', 'warning');
+        button.disabled = true;
+        button.textContent = 'NOT AVAILABLE';
+      } else {
+        status.textContent = 'ACTIVE';
+        showRecordMessage('Pendaftaran Open House masih aktif. Tekan butang di bawah untuk membatalkannya.', 'warning');
+        button.textContent = 'REJECT OPEN HOUSE';
+      }
+    }
+
+    function showRecordMessage(text, type) {
+      const el = document.getElementById('recordMessage');
+      el.textContent = text;
+      el.className = 'message ' + type;
+    }
+
+    function rejectOpenHouse() {
+      if (!currentOpenHouse || !currentOpenHouse.openHouseId) {
+        showMessage('Maklumat Open House tidak dijumpai.', 'error');
+        return;
+      }
+      if (currentOpenHouse.status !== 'ACTIVE') {
+        showMessage('Open House ini bukan lagi berstatus ACTIVE.', 'warning');
+        return;
+      }
+      if (!window.confirm('Adakah anda pasti mahu REJECT pendaftaran Open House ini? Tindakan ini akan membatalkan QR Open House.')) return;
+
+      const button = document.getElementById('rejectBtn');
+      button.disabled = true;
+      button.textContent = 'PROCESSING...';
+
+      callApi('rejectOpenHouse', {openHouseId:currentOpenHouse.openHouseId}, function(response) {
+        if (response && response.success) {
+          currentOpenHouse.status = 'REJECTED';
+          displayOpenHouse();
+          showMessage(response.message || 'Pendaftaran Open House berjaya ditolak.', 'success');
+        } else {
+          button.disabled = false;
+          button.textContent = 'REJECT OPEN HOUSE';
+          showMessage(response && response.message ? response.message : 'Reject Open House gagal.', 'error');
+        }
+      });
+    }
+
+    function callApi(api, params, callback) {
+      const callbackName = 'ohCallback_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+      window[callbackName] = function(response) {
+        try { callback(response); }
+        finally {
+          delete window[callbackName];
+          const script = document.getElementById(callbackName);
+          if (script) script.remove();
+        }
+      };
+      const query = new URLSearchParams();
+      query.set('api', api);
+      query.set('callback', callbackName);
+      query.set('_', Date.now());
+      Object.keys(params || {}).forEach(key => query.set(key, params[key]));
+      const script = document.createElement('script');
+      script.id = callbackName;
+      script.src = API_URL + '?' + query.toString();
+      script.async = true;
+      script.onerror = function() {
+        delete window[callbackName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+        showMessage('Sambungan ke server gagal. Sila cuba lagi.', 'error');
+      };
+      document.body.appendChild(script);
+    }
+
+    function showMessage(message, type) {
+      const el = document.getElementById('globalMessage');
+      el.textContent = message;
+      el.className = 'message ' + (type || '');
+      el.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
