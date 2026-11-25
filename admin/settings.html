@@ -6,342 +6,960 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#102d4d">
 <title>System Settings | Alam Idaman</title>
+
 <style>
-:root{--navy:#102d4d;--blue:#245a91;--green:#187044;--red:#b42318;--text:#1c2d40;--muted:#65758a;--bg:#f3f6fa;--border:#e1e8f0}
+:root{
+  --navy:#102d4d;
+  --blue:#245a91;
+  --green:#187044;
+  --red:#b42318;
+  --text:#1c2d40;
+  --muted:#65758a;
+  --bg:#f3f6fa;
+  --border:#e1e8f0;
+}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+}
+
 a{text-decoration:none}
-.header{background:var(--navy);color:white}
-.header-inner{max-width:1120px;margin:auto;padding:18px 24px;display:flex;align-items:center;gap:16px}
-.logo{width:66px;height:66px;object-fit:contain;background:white;padding:5px;border-radius:12px;flex-shrink:0}
-.brand h1{font-size:23px;margin:0 0 5px;letter-spacing:1px}
-.brand p{margin:0;color:#d6e4f2;font-size:13px;letter-spacing:.5px}
-.header-actions{margin-left:auto;display:flex;gap:10px}
-.header-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border:1px solid rgba(255,255,255,.55);border-radius:10px;color:white;background:rgba(255,255,255,.1);font-size:12px;font-weight:bold;cursor:pointer;white-space:nowrap}
-.banner{position:relative;height:260px;overflow:hidden;background:#183c60}
-.banner img{width:100%;height:100%;object-fit:cover;display:block}
-.banner-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(90deg,rgba(8,29,52,.76),rgba(8,29,52,.22))}
-.banner-content{color:white;max-width:760px}
-.banner-content h2{font-size:clamp(28px,4vw,43px);margin:0 0 12px}
-.banner-content p{font-size:15px;line-height:1.7;margin:0}
-.container{max-width:920px;margin:auto;padding:35px 24px 45px}
-.section-heading{text-align:center;margin-bottom:25px}
-.section-heading h2{color:var(--navy);font-size:27px;margin:0 0 10px}
-.section-heading p{color:var(--muted);margin:0;line-height:1.6}
-.panel{background:white;border:1px solid var(--border);border-radius:15px;padding:22px;margin-bottom:22px;box-shadow:0 8px 26px rgba(16,45,77,.04)}
-.panel h3{color:var(--navy);margin:0 0 17px;font-size:19px}
-.setting-list{display:grid;gap:13px}
-.setting-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,280px);align-items:center;gap:18px;padding:16px;border:1px solid var(--border);border-radius:11px}
-.setting-name{font-weight:bold;color:var(--navy);font-size:14px}
-.setting-description{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
-input,select{width:100%;min-width:0;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:var(--text);font-size:14px}
-button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
+
+.header{
+  background:var(--navy);
+  color:white;
+}
+
+.header-inner{
+  max-width:1120px;
+  margin:auto;
+  padding:18px 24px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.logo{
+  width:66px;
+  height:66px;
+  object-fit:contain;
+  background:white;
+  padding:5px;
+  border-radius:12px;
+  flex-shrink:0;
+}
+
+.brand h1{
+  font-size:23px;
+  margin:0 0 5px;
+  letter-spacing:1px;
+}
+
+.brand p{
+  margin:0;
+  color:#d6e4f2;
+  font-size:13px;
+  letter-spacing:.5px;
+}
+
+.header-actions{
+  margin-left:auto;
+  display:flex;
+  gap:10px;
+}
+
+.header-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:10px 14px;
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:10px;
+  color:white;
+  background:rgba(255,255,255,.1);
+  font-size:12px;
+  font-weight:bold;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.banner{
+  position:relative;
+  height:260px;
+  overflow:hidden;
+  background:#183c60;
+}
+
+.banner img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.banner-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:24px;
+  background:linear-gradient(
+    90deg,
+    rgba(8,29,52,.76),
+    rgba(8,29,52,.22)
+  );
+}
+
+.banner-content{
+  color:white;
+  max-width:760px;
+}
+
+.banner-content h2{
+  font-size:clamp(28px,4vw,43px);
+  margin:0 0 12px;
+}
+
+.banner-content p{
+  font-size:15px;
+  line-height:1.7;
+  margin:0;
+}
+
+.container{
+  max-width:920px;
+  margin:auto;
+  padding:35px 24px 45px;
+}
+
+.section-heading{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.section-heading h2{
+  color:var(--navy);
+  font-size:27px;
+  margin:0 0 10px;
+}
+
+.section-heading p{
+  color:var(--muted);
+  margin:0;
+  line-height:1.6;
+}
+
+.panel{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:22px;
+  margin-bottom:22px;
+  box-shadow:0 8px 26px rgba(16,45,77,.04);
+}
+
+.panel h3{
+  color:var(--navy);
+  margin:0 0 17px;
+  font-size:19px;
+}
+
+.setting-list{
+  display:grid;
+  gap:13px;
+}
+
+.setting-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(180px,280px);
+  align-items:center;
+  gap:18px;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:11px;
+}
+
+.setting-name{
+  font-weight:bold;
+  color:var(--navy);
+  font-size:14px;
+}
+
+.setting-description{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:5px;
+  line-height:1.5;
+}
+
+input,select{
+  width:100%;
+  min-width:0;
+  padding:12px 13px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  background:white;
+  color:var(--text);
+  font-size:14px;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  padding:12px 18px;
+  background:var(--blue);
+  color:white;
+  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+
 .btn-green{background:var(--green)}
-.btn-light{background:#e8eef5;color:var(--navy)}
-.actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}
-.status-message{margin-top:14px;font-size:13px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}
+
+.btn-light{
+  background:#e8eef5;
+  color:var(--navy);
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+.status-message{
+  margin-top:14px;
+  font-size:13px;
+  line-height:1.6;
+  color:var(--muted);
+  overflow-wrap:anywhere;
+}
+
 .status-message.error{color:var(--red)}
 .status-message.success{color:var(--green)}
-.info{padding:13px 15px;background:#f5f8fc;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-size:12px;line-height:1.7}
-.footer{background:var(--navy);color:#d5e2ef;text-align:center;padding:23px 18px;font-size:12px;line-height:1.8}
+
+.footer{
+  background:var(--navy);
+  color:#d5e2ef;
+  text-align:center;
+  padding:23px 18px;
+  font-size:12px;
+  line-height:1.8;
+}
+
 .footer strong{color:white}
+
 @media(max-width:760px){
-.header-inner{flex-wrap:wrap;padding:15px 16px}
-.logo{width:54px;height:54px}
-.brand h1{font-size:19px}
-.brand p{font-size:10px}
-.header-actions{width:100%;margin-left:0}
-.header-btn{flex:1}
-.banner{height:220px}
-.container{padding:27px 13px 35px}
-.section-heading h2{font-size:23px}
-.panel{padding:16px}
-.setting-row{grid-template-columns:1fr;gap:10px}
-.actions button{flex:1}
+  .header-inner{
+    flex-wrap:wrap;
+    padding:15px 16px;
+  }
+
+  .logo{
+    width:54px;
+    height:54px;
+  }
+
+  .brand h1{font-size:19px}
+  .brand p{font-size:10px}
+
+  .header-actions{
+    width:100%;
+    margin-left:0;
+  }
+
+  .header-btn{flex:1}
+  .banner{height:220px}
+
+  .container{
+    padding:27px 13px 35px;
+  }
+
+  .section-heading h2{font-size:23px}
+  .panel{padding:16px}
+
+  .setting-row{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .actions button{flex:1}
 }
 </style>
 </head>
+
 <body>
+
 <header class="header">
   <div class="header-inner">
-    <img src="../logo.png" alt="Logo Alam Idaman" class="logo">
-    <div class="brand"><h1>ALAM IDAMAN</h1><p>PORTAL PENDAFTARAN PELAWAT</p></div>
-    <div class="header-actions">
-      <a class="header-btn" href="dashboard.html">← DASHBOARD</a>
-      <button class="header-btn" id="logout" type="button">🔐 LOG KELUAR</button>
+
+    <img
+      src="../logo.png"
+      alt="Logo Alam Idaman"
+      class="logo"
+    >
+
+    <div class="brand">
+      <h1>ALAM IDAMAN</h1>
+      <p>PORTAL PENDAFTARAN PELAWAT</p>
     </div>
+
+    <div class="header-actions">
+      <a class="header-btn" href="dashboard.html">
+        ← DASHBOARD
+      </a>
+
+      <button
+        class="header-btn"
+        id="logout"
+        type="button"
+      >
+        🔐 LOG KELUAR
+      </button>
+    </div>
+
   </div>
 </header>
+
+
 <section class="banner">
-  <img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman">
+
+  <img
+    src="../banner.jpg"
+    alt="Kawasan perumahan Alam Idaman"
+  >
+
   <div class="banner-overlay">
     <div class="banner-content">
       <h2>System Settings</h2>
-      <p>Pengurusan tetapan sistem Visitor Management System (VMS) Alam Idaman.</p>
+      <p>
+        Pengurusan tetapan sistem Visitor Management System
+        (VMS) Alam Idaman.
+      </p>
     </div>
   </div>
+
 </section>
+
+
 <main class="container">
+
   <div class="section-heading">
     <h2>Pengurusan Tetapan Sistem</h2>
-    <p>Kemaskini konfigurasi sistem. Perubahan akan disimpan terus ke tab Settings dalam Google Sheets.</p>
+    <p>
+      Kemaskini konfigurasi sistem. Perubahan akan disimpan
+      terus ke tab Settings dalam Google Sheets.
+    </p>
   </div>
+
+
   <section class="panel">
+
     <h3>⚙️ Tetapan VMS</h3>
+
     <div class="setting-list">
+
       <div class="setting-row">
-        <div><div class="setting-name">Admin Email</div><div class="setting-description">Alamat e-mel pentadbir sistem.</div></div>
-        <input id="adminEmail" type="email" autocomplete="off" placeholder="admin@example.com">
+
+        <div>
+          <div class="setting-name">Admin Email</div>
+          <div class="setting-description">
+            Alamat e-mel pentadbir sistem.
+          </div>
+        </div>
+
+        <input
+          id="adminEmail"
+          type="email"
+          autocomplete="off"
+          placeholder="admin@example.com"
+        >
+
       </div>
+
+
       <div class="setting-row">
-        <div><div class="setting-name">Scanner License</div><div class="setting-description">Kawal sama ada pengawal perlu memuat naik lesen ketika imbasan.</div></div>
-        <select id="scannerLicense"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <div>
+          <div class="setting-name">Scanner License</div>
+          <div class="setting-description">
+            Kawal sama ada pengawal perlu memuat naik lesen
+            ketika imbasan.
+          </div>
+        </div>
+
+        <select id="scannerLicense">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
       </div>
+
+
       <div class="setting-row">
-        <div><div class="setting-name">Register License</div><div class="setting-description">Kawal keperluan lesen semasa pendaftaran.</div></div>
-        <select id="registerLicense"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <div>
+          <div class="setting-name">Register License</div>
+          <div class="setting-description">
+            Kawal keperluan lesen semasa pendaftaran.
+          </div>
+        </div>
+
+        <select id="registerLicense">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
       </div>
+
+
       <div class="setting-row">
-        <div><div class="setting-name">Allow All OH</div><div class="setting-description">Kawal sama ada semua permohonan Open House dibenarkan.</div></div>
-        <select id="allowAllOH"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+        <div>
+          <div class="setting-name">Allow All OH</div>
+          <div class="setting-description">
+            Kawal sama ada semua permohonan Open House
+            dibenarkan.
+          </div>
+        </div>
+
+        <select id="allowAllOH">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
       </div>
+
     </div>
+
+
     <div class="actions">
-      <button type="button" class="btn-light" id="reload">MUAT SEMULA</button>
-      <button type="button" class="btn-green" id="save">SIMPAN TETAPAN</button>
+
+      <button
+        type="button"
+        class="btn-light"
+        id="reload"
+      >
+        MUAT SEMULA
+      </button>
+
+      <button
+        type="button"
+        class="btn-green"
+        id="save"
+      >
+        SIMPAN TETAPAN
+      </button>
+
     </div>
-    <div id="status" class="status-message" aria-live="polite">Sedang mengesahkan sesi login...</div>
+
+    <div
+      id="status"
+      class="status-message"
+      aria-live="polite"
+    >
+      Sedang mengesahkan sesi login...
+    </div>
+
   </section>
-  <section class="panel">
-    <h3>🔐 Status Sambungan API</h3>
-    <div class="info">Halaman ini menggunakan sesi login portal VMS secara automatik. Token tidak perlu dimasukkan secara manual.</div>
-    <div id="connectionStatus" class="status-message" aria-live="polite">Menunggu pengesahan...</div>
-  </section>
+
 </main>
-<footer class="footer"><strong>ALAM IDAMAN</strong><br>Visitor Management System (VMS)<br>Halaman pengurusan tetapan sistem.</footer>
+
+
+<footer class="footer">
+  <strong>ALAM IDAMAN</strong>
+  <br>
+  Visitor Management System (VMS)
+  <br>
+  Halaman pengurusan tetapan sistem.
+</footer>
+
+
 <script>
 (() => {
 'use strict';
 
-/* API CONFIGURATION */
-const API_URL='https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
-const LOGIN_API_URL='https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
-const LOGIN_URL='https://alamidaman.github.io/vms/admin/';
-const TOKEN_KEY='PPAI_SESSION_TOKEN';
-const $=id=>document.getElementById(id);
-let sessionValid=false;
 
-/* TOKEN */
-function getToken(){
-  return sessionStorage.getItem(TOKEN_KEY)||'';
+/* ============================================================
+   API CONFIGURATION
+   ============================================================ */
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycby9wbRoLvhfbOOS386zFsYE36vLdoyrGQ3eUq2V4hlZh0t2zKDUxkQK5bJQK319gzWScQ/exec';
+
+const LOGIN_API_URL =
+  'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+
+const LOGIN_URL =
+  'https://alamidaman.github.io/vms/admin/';
+
+const TOKEN_KEY = 'PPAI_SESSION_TOKEN';
+
+const $ = id => document.getElementById(id);
+
+let sessionValid = false;
+
+
+/* ============================================================
+   TOKEN
+   ============================================================ */
+
+function getToken() {
+  return sessionStorage.getItem(TOKEN_KEY) || '';
 }
 
-/* JSONP - KAEDAH SAMA SEPERTI EMAIL LOG */
-function jsonp(baseUrl,params={},timeoutMs=20000){
-  return new Promise((resolve,reject)=>{
-    const cb='ppaiCb'+Date.now()+Math.floor(Math.random()*10000);
-    const script=document.createElement('script');
-    let settled=false;
-    const timer=setTimeout(()=>{
-      finish(Error('API tidak memberi respons. Semak URL dan deployment Apps Script.'));
-    },timeoutMs);
 
-    function finish(error,data){
-      if(settled)return;
-      settled=true;
+/* ============================================================
+   JSONP REQUEST
+   ============================================================ */
+
+function jsonp(baseUrl, params = {}, timeoutMs = 20000) {
+  return new Promise((resolve, reject) => {
+
+    const callback =
+      'ppaiCb' + Date.now() + Math.floor(Math.random() * 10000);
+
+    const script = document.createElement('script');
+
+    let settled = false;
+
+    const timer = setTimeout(() => {
+      finish(
+        Error('API tidak memberi respons. Semak URL dan deployment Apps Script.')
+      );
+    }, timeoutMs);
+
+
+    function finish(error, data) {
+      if (settled) return;
+
+      settled = true;
+
       clearTimeout(timer);
-      delete window[cb];
+
+      delete window[callback];
+
       script.remove();
-      if(error)reject(error);
-      else resolve(data);
-    }
 
-    window[cb]=data=>finish(null,data);
-    script.onerror=()=>finish(Error('Gagal menghubungi API. Semak URL Web App dan akses deployment.'));
-
-    const url=new URL(baseUrl);
-    Object.entries({...params,callback:cb}).forEach(([key,value])=>{
-      url.searchParams.set(key,String(value??''));
-    });
-    script.src=url.toString();
-    document.head.appendChild(script);
-  });
-}
-
-/* LOGIN API */
-function jsonpLoginRequest(params={}){
-  return jsonp(LOGIN_API_URL,{
-    ...params,
-    token:getToken()
-  });
-}
-
-/* SETTINGS API */
-function jsonpSettingsRequest(params={}){
-  if(!sessionValid)return Promise.reject(Error('Sesi login belum disahkan.'));
-  return jsonp(API_URL,{
-    ...params,
-    token:getToken()
-  });
-}
-
-/* STATUS */
-function setMessage(message,type=''){
-  $('status').textContent=message;
-  $('status').className='status-message'+(type?' '+type:'');
-}
-function setConnectionMessage(message,type=''){
-  $('connectionStatus').textContent=message;
-  $('connectionStatus').className='status-message'+(type?' '+type:'');
-}
-function setBusy(busy){
-  $('save').disabled=busy;
-  $('reload').disabled=busy;
-}
-
-/* REDIRECT LOGIN */
-function redirectToLogin(message){
-  sessionValid=false;
-  sessionStorage.removeItem(TOKEN_KEY);
-  if(message)sessionStorage.setItem('PPAI_LOGIN_NOTICE',message);
-  location.replace(LOGIN_URL);
-}
-
-/* VERIFY LOGIN SESSION - FORMAT SEPERTI EMAIL LOG */
-async function verifySession(){
-  const token=getToken();
-  if(!token){
-    redirectToLogin('Sila log masuk untuk meneruskan.');
-    return false;
-  }
-
-  setConnectionMessage('Sedang mengesahkan sesi login...');
-
-  try{
-    const result=await jsonpLoginRequest({
-      action:'api',
-      task:'me'
-    });
-
-    if(!result.success||!result.user){
-      redirectToLogin('Sesi login telah tamat. Sila log masuk semula.');
-      return false;
-    }
-
-    sessionValid=true;
-    setConnectionMessage('Sesi login berjaya disahkan.','success');
-    return true;
-  }catch(error){
-    setConnectionMessage(error.message,'error');
-    setMessage('Tidak dapat mengesahkan sesi login. Sila cuba muat semula halaman.','error');
-    return false;
-  }
-}
-
-/* APPLY SETTINGS */
-function applySettings(settings){
-  $('adminEmail').value=settings['Admin Email']||'';
-  $('scannerLicense').value=settings['Scanner License']||'No';
-  $('registerLicense').value=settings['Register License']||'Yes';
-  $('allowAllOH').value=settings['Allow All OH']||'No';
-}
-
-/* LOAD SETTINGS */
-async function loadSettings(){
-  if(!sessionValid){
-    setMessage('Sesi login belum disahkan.','error');
-    return;
-  }
-
-  setBusy(true);
-  setMessage('Sedang memuatkan tetapan...');
-
-  try{
-    const result=await jsonpSettingsRequest({
-      action:'getSettings'
-    });
-
-    if(!result||result.success!==true){
-      throw Error(result?.message||'Gagal mendapatkan tetapan.');
-    }
-
-    applySettings(result.settings||{});
-    setMessage('Tetapan berjaya dimuatkan daripada Google Sheets.','success');
-  }catch(error){
-    console.error('Load Settings:',error);
-    setMessage(error.message,'error');
-  }finally{
-    setBusy(false);
-  }
-}
-
-/* SAVE SETTINGS */
-async function saveSettings(){
-  if(!sessionValid){
-    setMessage('Sesi login belum disahkan. Sila login semula.','error');
-    return;
-  }
-
-  const updates=[
-    ['Admin Email',$('adminEmail').value.trim()],
-    ['Scanner License',$('scannerLicense').value],
-    ['Register License',$('registerLicense').value],
-    ['Allow All OH',$('allowAllOH').value]
-  ];
-
-  const email=updates[0][1];
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    setMessage('Sila masukkan Admin Email yang sah.','error');
-    $('adminEmail').focus();
-    return;
-  }
-
-  setBusy(true);
-  setMessage('Sedang menyimpan tetapan...');
-
-  try{
-    for(const [setting,value] of updates){
-      const result=await jsonpSettingsRequest({
-        action:'updateSetting',
-        setting,
-        value
-      });
-
-      if(!result||result.success!==true){
-        throw Error(result?.message||'Gagal menyimpan tetapan: '+setting);
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
       }
     }
 
-    setMessage('Semua tetapan berjaya dikemaskini.','success');
-    await loadSettings();
-  }catch(error){
-    console.error('Save Settings:',error);
-    setMessage(error.message,'error');
-  }finally{
-    setBusy(false);
-  }
+
+    window[callback] = data => finish(null, data);
+
+    script.onerror = () => {
+      finish(
+        Error('Gagal menghubungi API. Semak URL Web App dan akses deployment.')
+      );
+    };
+
+
+    const url = new URL(baseUrl);
+
+    Object.entries({
+      ...params,
+      callback: callback
+    }).forEach(([key, value]) => {
+      url.searchParams.set(
+        key,
+        String(value ?? '')
+      );
+    });
+
+    script.src = url.toString();
+
+    document.head.appendChild(script);
+
+  });
 }
 
-/* BUTTON EVENTS */
-$('reload').addEventListener('click',loadSettings);
-$('save').addEventListener('click',saveSettings);
 
-/* LOGOUT */
-$('logout').addEventListener('click',()=>{
+/* ============================================================
+   LOGIN API
+   ============================================================ */
+
+function jsonpLoginRequest(params = {}) {
+  return jsonp(LOGIN_API_URL, {
+    ...params,
+    token: getToken()
+  });
+}
+
+
+/* ============================================================
+   SETTINGS API
+   ============================================================ */
+
+function jsonpSettingsRequest(params = {}) {
+
+  if (!sessionValid) {
+    return Promise.reject(
+      Error('Sesi login belum disahkan.')
+    );
+  }
+
+  return jsonp(API_URL, {
+    ...params,
+    token: getToken()
+  });
+
+}
+
+
+/* ============================================================
+   STATUS MESSAGE
+   ============================================================ */
+
+function setMessage(message, type = '') {
+
+  $('status').textContent = message;
+
+  $('status').className =
+    'status-message' + (type ? ' ' + type : '');
+
+}
+
+
+/* ============================================================
+   BUSY STATE
+   ============================================================ */
+
+function setBusy(busy) {
+
+  $('save').disabled = busy;
+
+  $('reload').disabled = busy;
+
+}
+
+
+/* ============================================================
+   REDIRECT LOGIN
+   ============================================================ */
+
+function redirectToLogin(message) {
+
+  sessionValid = false;
+
   sessionStorage.removeItem(TOKEN_KEY);
-  sessionValid=false;
+
+  if (message) {
+    sessionStorage.setItem(
+      'PPAI_LOGIN_NOTICE',
+      message
+    );
+  }
+
   location.replace(LOGIN_URL);
+
+}
+
+
+/* ============================================================
+   VERIFY LOGIN SESSION
+   ============================================================ */
+
+async function verifySession() {
+
+  const token = getToken();
+
+  if (!token) {
+    redirectToLogin(
+      'Sila log masuk untuk meneruskan.'
+    );
+
+    return false;
+  }
+
+  setMessage('Sedang mengesahkan sesi login...');
+
+  try {
+
+    const result = await jsonpLoginRequest({
+      action: 'api',
+      task: 'me'
+    });
+
+    if (!result.success || !result.user) {
+
+      redirectToLogin(
+        'Sesi login telah tamat. Sila log masuk semula.'
+      );
+
+      return false;
+    }
+
+    sessionValid = true;
+
+    setMessage(
+      'Sesi login disahkan. Sedang memuatkan tetapan...'
+    );
+
+    return true;
+
+  } catch (error) {
+
+    sessionValid = false;
+
+    setMessage(
+      'Tidak dapat mengesahkan sesi login. ' + error.message,
+      'error'
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* ============================================================
+   APPLY SETTINGS
+   ============================================================ */
+
+function applySettings(settings) {
+
+  $('adminEmail').value =
+    settings['Admin Email'] || '';
+
+  $('scannerLicense').value =
+    settings['Scanner License'] || 'No';
+
+  $('registerLicense').value =
+    settings['Register License'] || 'Yes';
+
+  $('allowAllOH').value =
+    settings['Allow All OH'] || 'No';
+
+}
+
+
+/* ============================================================
+   LOAD SETTINGS
+   ============================================================ */
+
+async function loadSettings() {
+
+  if (!sessionValid) {
+
+    setMessage(
+      'Sesi login belum disahkan.',
+      'error'
+    );
+
+    return;
+  }
+
+  setBusy(true);
+
+  setMessage('Sedang memuatkan tetapan...');
+
+  try {
+
+    const result = await jsonpSettingsRequest({
+      action: 'getSettings'
+    });
+
+    if (!result || result.success !== true) {
+      throw Error(
+        result?.message || 'Gagal mendapatkan tetapan.'
+      );
+    }
+
+    applySettings(result.settings || {});
+
+    setMessage(
+      'Tetapan berjaya dimuatkan daripada Google Sheets.',
+      'success'
+    );
+
+  } catch (error) {
+
+    console.error('Load Settings:', error);
+
+    setMessage(
+      error.message,
+      'error'
+    );
+
+  } finally {
+
+    setBusy(false);
+
+  }
+
+}
+
+
+/* ============================================================
+   SAVE SETTINGS
+   Satu panggilan API untuk semua tetapan.
+   ============================================================ */
+
+async function saveSettings() {
+
+  if (!sessionValid) {
+
+    setMessage(
+      'Sesi login belum disahkan. Sila login semula.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  const updates = {
+
+    'Admin Email':
+      $('adminEmail').value.trim(),
+
+    'Scanner License':
+      $('scannerLicense').value,
+
+    'Register License':
+      $('registerLicense').value,
+
+    'Allow All OH':
+      $('allowAllOH').value
+
+  };
+
+
+  const email = updates['Admin Email'];
+
+  if (
+    !email ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  ) {
+
+    setMessage(
+      'Sila masukkan Admin Email yang sah.',
+      'error'
+    );
+
+    $('adminEmail').focus();
+
+    return;
+  }
+
+
+  setBusy(true);
+
+  setMessage('Sedang menyimpan tetapan...');
+
+
+  try {
+
+    const result = await jsonpSettingsRequest({
+
+      action: 'updateSettings',
+
+      settings: JSON.stringify(updates)
+
+    });
+
+
+    if (!result || result.success !== true) {
+
+      throw Error(
+        result?.message || 'Gagal menyimpan tetapan.'
+      );
+
+    }
+
+
+    setMessage(
+      'Semua tetapan berjaya dikemaskini.',
+      'success'
+    );
+
+
+  } catch (error) {
+
+    console.error('Save Settings:', error);
+
+    setMessage(
+      error.message,
+      'error'
+    );
+
+  } finally {
+
+    setBusy(false);
+
+  }
+
+}
+
+
+/* ============================================================
+   BUTTON EVENTS
+   ============================================================ */
+
+$('reload').addEventListener(
+  'click',
+  loadSettings
+);
+
+$('save').addEventListener(
+  'click',
+  saveSettings
+);
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+$('logout').addEventListener('click', () => {
+
+  sessionStorage.removeItem(TOKEN_KEY);
+
+  sessionValid = false;
+
+  location.replace(LOGIN_URL);
+
 });
 
-/* INITIALIZE */
-async function initializePage(){
-  const verified=await verifySession();
-  if(verified)await loadSettings();
+
+/* ============================================================
+   INITIALIZE
+   ============================================================ */
+
+async function initializePage() {
+
+  const verified = await verifySession();
+
+  if (verified) {
+    await loadSettings();
+  }
+
 }
+
 initializePage();
 
 })();
 </script>
+
 </body>
 </html>
