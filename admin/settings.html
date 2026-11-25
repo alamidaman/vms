@@ -73,9 +73,7 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
       <button type="button" class="btn-light" id="reload">MUAT SEMULA</button>
       <button type="button" class="btn-green" id="save">SIMPAN TETAPAN</button>
     </div>
-    <div id="status" class="status-message">Paparan awal menggunakan nilai tetapan semasa yang diberikan. Penyegerakan dan penyimpanan ke Google Sheets memerlukan sambungan API yang disahkan.</div>
-  </section>
-
+    <div id="status" class="status-message">Sedang mengesahkan sesi login...</div>
   </section>
 </main>
 
@@ -84,9 +82,16 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
 <script>
 (() => {
   const API_URL = 'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+  const LOGIN_API_URL = 'https://script.google.com/macros/s/AKfycbx9oBehFO9PApRCvdLTl7adSc4VRKfGvGOHJ5LsAVdnzQXEif0caZA_MJOZX3qKLFmLIA/exec';
+  const LOGIN_URL = 'https://alamidaman.github.io/vms/admin/';
   const TOKEN_KEY = 'PPAI_SESSION_TOKEN';
   const $ = id => document.getElementById(id);
-  let adminToken = '';
+
+  let sessionValid = false;
+
+  function getToken() {
+    return sessionStorage.getItem(TOKEN_KEY) || '';
+  }
 
   function message(text, type = '') {
     $('status').textContent = text;
@@ -96,26 +101,75 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
   function setBusy(busy) {
     $('save').disabled = busy;
     $('reload').disabled = busy;
-    $('connect').disabled = busy;
   }
 
-  async function api(params, method = 'GET') {
-    const payload = {...params, token: adminToken};
+  function jsonpRequest(urlString, params, timeoutMs = 20000) {
+    return new Promise((resolve, reject) => {
+      const callbackName = 'settingsCb_' + Date.now() + '_' +
+        Math.random().toString(36).slice(2);
+      const script = document.createElement('script');
+      const url = new URL(urlString);
 
-    if (method === 'GET') {
-      const url = new URL(API_URL);
-      Object.entries(payload).forEach(([key, value]) => url.searchParams.set(key, value));
-      const response = await fetch(url.toString(), {method: 'GET', redirect: 'follow'});
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      return response.json();
+      Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.set(key, String(value));
+      });
+      url.searchParams.set('callback', callbackName);
+
+      let finished = false;
+      const timer = setTimeout(() => {
+        finish(new Error('Sambungan tamat masa. Sila cuba lagi.'));
+      }, timeoutMs);
+
+      function finish(error, data) {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        delete window[callbackName];
+        script.remove();
+        if (error) reject(error);
+        else resolve(data);
+      }
+
+      window[callbackName] = data => finish(null, data);
+      script.onerror = () => finish(new Error(
+        'API Settings tidak dapat dihubungi. Semak URL dan deployment Apps Script.'
+      ));
+      script.src = url.toString();
+      document.body.appendChild(script);
+    });
+  }
+
+  function redirectToLogin(text) {
+    sessionStorage.removeItem(TOKEN_KEY);
+    if (text) sessionStorage.setItem('PPAI_LOGIN_NOTICE', text);
+    window.location.replace(LOGIN_URL);
+  }
+
+  async function verifySession() {
+    const token = getToken();
+    if (!token) {
+      redirectToLogin('Sila log masuk untuk meneruskan.');
+      return false;
     }
 
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      body: new URLSearchParams(payload)
-    });
-    if (!response.ok) throw new Error('HTTP ' + response.status);
-    return response.json();
+    try {
+      const result = await jsonpRequest(LOGIN_API_URL, {
+        action: 'api',
+        task: 'me',
+        token
+      }, 15000);
+
+      if (!result || !result.success || !result.user) {
+        redirectToLogin('Sesi login tamat. Sila log masuk semula.');
+        return false;
+      }
+
+      sessionValid = true;
+      return true;
+    } catch (error) {
+      message('Gagal mengesahkan sesi login. Muat semula halaman untuk cuba lagi.', 'error');
+      return false;
+    }
   }
 
   function applySettings(settings) {
@@ -126,24 +180,35 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
   }
 
   async function loadSettings() {
-    if (!adminToken) throw new Error('Sila masukkan Admin API Token terlebih dahulu.');
+    if (!sessionValid) {
+      redirectToLogin('Sila login semula.');
+      return;
+    }
+
     setBusy(true);
-    message('Sedang memuatkan tetapan...');
+    message('Sedang memuatkan tetapan daripada Google Sheets...');
     try {
-      const result = await api({action: 'getSettings'});
-      if (!result.success) throw new Error(result.message || 'Gagal mendapatkan tetapan.');
+      const result = await jsonpRequest(API_URL, {
+        action: 'getSettings',
+        token: getToken()
+      });
+
+      if (!result || !result.success) {
+        throw new Error(result?.message || 'Gagal mendapatkan tetapan.');
+      }
+
       applySettings(result.settings || {});
       message('Tetapan berjaya dimuatkan daripada Google Sheets.', 'success');
     } catch (error) {
-      message(error.message + ' Jika ralat CORS berlaku, API perlu disediakan melalui kaedah JSONP/proxy yang serasi dengan GitHub Pages.', 'error');
+      message(error.message, 'error');
     } finally {
       setBusy(false);
     }
   }
 
   async function saveSettings() {
-    if (!adminToken) {
-      message('Sila sambungkan Admin API Token terlebih dahulu.', 'error');
+    if (!sessionValid) {
+      redirectToLogin('Sila login semula.');
       return;
     }
 
@@ -164,37 +229,61 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
     message('Sedang menyimpan tetapan...');
     try {
       for (const [setting, value] of updates) {
-        const result = await api({action: 'updateSetting', setting, value}, 'POST');
-        if (!result.success) throw new Error(result.message || 'Gagal menyimpan ' + setting);
+        const result = await jsonpRequest(API_URL, {
+          action: 'updateSetting',
+          token: getToken(),
+          setting,
+          value
+        });
+
+        if (!result || !result.success) {
+          throw new Error(result?.message || 'Gagal menyimpan ' + setting + '.');
+        }
       }
-      message('Semua tetapan berjaya dikemaskini.', 'success');
+
+      message('Semua tetapan berjaya dikemaskini dalam Google Sheets.', 'success');
+      await loadSettings();
     } catch (error) {
-      message(error.message + ' Semak routing doPost(e) dan kebenaran API.', 'error');
+      message(error.message + ' Pastikan Apps Script menerima token PPAI_SESSION_TOKEN untuk action getSettings dan updateSetting melalui doGet(e).', 'error');
     } finally {
       setBusy(false);
     }
   }
 
-  $('connect').addEventListener('click', () => {
-    adminToken = $('adminToken').value.trim();
-    if (!adminToken) {
-      message('Sila masukkan Admin API Token.', 'error');
-      return;
-    }
-    loadSettings();
-  });
-
   $('reload').addEventListener('click', loadSettings);
   $('save').addEventListener('click', saveSettings);
 
-  $('logout').addEventListener('click', () => {
+  $('logout').addEventListener('click', async () => {
+    const token = getToken();
     sessionStorage.removeItem(TOKEN_KEY);
-    adminToken = '';
-    location.replace('index.html');
+    sessionValid = false;
+
+    if (token) {
+      try {
+        await jsonpRequest(LOGIN_API_URL, {
+          action: 'api',
+          task: 'logout',
+          token
+        }, 5000);
+      } catch (error) {
+        // Token setempat sudah dipadam.
+      }
+    }
+
+    window.location.replace(LOGIN_URL);
   });
 
-  // Jika token sesi portal tersedia, ia tidak dianggap sebagai SETTINGS_ADMIN_TOKEN.
-  // Admin API token perlu disahkan secara berasingan oleh Apps Script.
+  async function initPage() {
+    setBusy(true);
+    const valid = await verifySession();
+    if (valid) {
+      message('Sesi login disahkan. Sedang memuatkan tetapan...');
+      await loadSettings();
+    }
+    setBusy(false);
+  }
+
+  initPage();
 })();
 </script>
 </body>
