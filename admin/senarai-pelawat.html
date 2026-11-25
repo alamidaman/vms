@@ -14,7 +14,7 @@
 .banner{position:relative;height:260px;overflow:hidden;background:#183c60}.banner img{width:100%;height:100%;object-fit:cover;display:block}.banner-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(90deg,rgba(8,29,52,.76),rgba(8,29,52,.22))}.banner-content{color:white;max-width:760px}.banner-content h2{font-size:clamp(28px,4vw,43px);margin:0 0 12px}.banner-content p{font-size:15px;line-height:1.7;margin:0}
 .container{max-width:1120px;margin:auto;padding:35px 24px 45px}.section-heading{text-align:center;margin-bottom:25px}.section-heading h2{color:var(--navy);font-size:27px;margin:0 0 10px}.section-heading p{color:var(--muted);margin:0;line-height:1.6}
 .panel{background:white;border:1px solid var(--border);border-radius:15px;padding:22px;margin-bottom:22px;box-shadow:0 8px 26px rgba(16,45,77,.04)}.panel h3{color:var(--navy);margin:0 0 17px;font-size:19px}
-.filter-grid{display:grid;grid-template-columns: minmax(140px,.7fr) minmax(170px,1fr) minmax(170px,1fr) auto auto;gap:10px;align-items:end}
+.filter-grid{display:grid;grid-template-columns: minmax(140px,.8fr) minmax(140px,.8fr) minmax(170px,1fr) minmax(190px,1.2fr) auto auto;gap:10px;align-items:end}
 .form-group label{display:block;margin-bottom:7px;font-size:13px;font-weight:bold;color:var(--navy)}
 input,select{width:100%;min-width:0;padding:12px 13px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:var(--text);font-size:14px}
 button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.btn-green{background:var(--green)}.btn-light{background:#e8eef5;color:var(--navy)}
@@ -43,7 +43,7 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
 <div class="form-group" id="dateGroup"><label for="visitDate">Tarikh</label><input id="visitDate" type="date" required></div>
 <div class="form-group" id="monthGroup" style="display:none"><label for="visitMonth">Bulan</label><input id="visitMonth" type="month"></div>
 <div class="form-group"><label for="q">Carian (Unit / No Plate)</label><input id="q" type="search" placeholder="Contoh: B-00-00 / ABC1234" autocomplete="off"></div>
-<button id="search" type="submit">CARI</button><button id="reset" type="button" class="btn-light">RESET</button>
+<button id="reset" type="button" class="btn-light">RESET</button><button id="search" type="submit">CARI</button>
 </form><div id="status" class="status-message">Sedang mengesahkan sesi login...</div></section>
 <section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 id="tableTitle" style="margin:0">Senarai Rekod Pelawat</h3><span id="periodLabel" class="status-message" style="margin:0"></span></div>
 <div class="table-wrap"><table><thead id="tableHead"><tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr></thead><tbody id="rows"><tr><td colspan="10" class="empty">Pilih tarikh atau bulan untuk memuatkan rekod.</td></tr></tbody></table></div>
@@ -71,13 +71,13 @@ const isDelivery=$('recordType').value==='delivery';
 
 if(isDelivery){
   $('tableTitle').textContent='Senarai Rekod Delivery';
-  $('tableHead').innerHTML='<tr><th>Lihat Lesen</th><th>Tarikh / Masa</th><th>Delivery ID</th><th>Guard</th><th>Delivery Company</th><th>No. Plate</th></tr>';
+  $('tableHead').innerHTML='<tr><th>Tarikh / Masa</th><th>Lihat Lesen</th><th>No. Plate</th><th>Delivery Company</th><th>Delivery ID</th></tr>';
   $('rows').innerHTML=items.length?items.map(r=>{
     const license=r.licenseUrl
       ? `<a class="btn-view-license" href="${esc(r.licenseUrl)}" target="_blank" rel="noopener noreferrer">LIHAT LESEN</a>`
       : '<span class="status-badge status-unknown">TIADA LESEN</span>';
-    return `<tr><td>${license}</td><td>${esc(r.timestamp||'—')}</td><td>${esc(r.deliveryId||'—')}</td><td>${esc(r.guard||'—')}</td><td>${esc(r.deliveryCompany||'—')}</td><td><b>${esc(r.plate||'—')}</b></td></tr>`;
-  }).join(''):'<tr><td colspan="6" class="empty">Tiada rekod Delivery ditemui bagi pilihan ini.</td></tr>';
+    return `<tr><td>${esc(r.timestamp||'—')}</td><td>${license}</td><td><b>${esc(r.plate||'—')}</b></td><td>${esc(r.deliveryCompany||'—')}</td><td>${esc(r.deliveryId||'—')}</td></tr>`;
+  }).join(''):'<tr><td colspan="5" class="empty">Tiada rekod Delivery ditemui bagi pilihan ini.</td></tr>';
 }else{
   $('tableTitle').textContent='Senarai Rekod Pelawat';
   $('tableHead').innerHTML='<tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr>';
@@ -98,7 +98,7 @@ async function search(){
 const isDelivery=$('recordType').value==='delivery';
 const label=isDelivery?'Delivery':'pelawat';
 message('Sedang mendapatkan rekod '+label+'...');
-$('rows').innerHTML='<tr><td colspan="'+(isDelivery?6:10)+'" class="empty">Memuatkan rekod...</td></tr>';
+$('rows').innerHTML='<tr><td colspan="'+(isDelivery?5:10)+'" class="empty">Memuatkan rekod...</td></tr>';
 $('pagination').innerHTML='';
 const p={period:$('period').value,q:$('q').value.trim()};
 if(p.period==='daily')p.date=$('visitDate').value;else p.month=$('visitMonth').value;
