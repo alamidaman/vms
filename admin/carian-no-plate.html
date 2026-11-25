@@ -636,20 +636,52 @@
                 const body = document.createElement('div');
                 body.className = 'record-body';
 
-                addField(body, 'Unit Rumah', record.unit);
+                if (record.recordType === 'Delivery') {
+                    addField(body, 'Delivery ID', record.deliveryId);
+                    addField(body, 'Tarikh / Masa', record.registerDate || record.visitDate);
+                    addField(body, 'Delivery Company', record.deliveryCompany);
+                    addField(body, 'Guard', record.guard);
+                    addField(body, 'No. Plate', record.plate);
 
-                if (record.recordType === 'Pelawat Biasa') {
-                    addField(body, 'Nama Pelawat', record.visitorName);
-                    addField(body, 'Tarikh Daftar', record.registerDate);
-                }
+                    if (record.licenseUrl) {
+                        const licenseRow = document.createElement('div');
+                        licenseRow.className = 'field';
 
-                addField(body, 'Nama Owner', record.ownerName);
-                addField(body, 'Phone Owner', record.ownerPhone);                
-                addField(body, 'No. Plate', record.plate);
-                addField(body, 'Jenis Kenderaan', record.vehicleType);
+                        const licenseLabel = document.createElement('div');
+                        licenseLabel.className = 'label';
+                        licenseLabel.textContent = 'Gambar Lesen';
 
-                if (record.recordType !== 'Kenderaan Berdaftar') {
-                    addField(body, 'Scan Terakhir', record.lastScan);
+                        const licenseValue = document.createElement('div');
+                        licenseValue.className = 'value';
+
+                        const licenseLink = document.createElement('a');
+                        licenseLink.href = record.licenseUrl;
+                        licenseLink.target = '_blank';
+                        licenseLink.rel = 'noopener noreferrer';
+                        licenseLink.textContent = 'Lihat gambar lesen';
+                        licenseLink.style.color = 'var(--blue)';
+                        licenseLink.style.fontWeight = 'bold';
+
+                        licenseValue.appendChild(licenseLink);
+                        licenseRow.append(licenseLabel, licenseValue);
+                        body.appendChild(licenseRow);
+                    }
+                } else {
+                    addField(body, 'Unit Rumah', record.unit);
+
+                    if (record.recordType === 'Pelawat Biasa') {
+                        addField(body, 'Nama Pelawat', record.visitorName);
+                        addField(body, 'Tarikh Daftar', record.registerDate);
+                    }
+
+                    addField(body, 'Nama Owner', record.ownerName);
+                    addField(body, 'Phone Owner', record.ownerPhone);
+                    addField(body, 'No. Plate', record.plate);
+                    addField(body, 'Jenis Kenderaan', record.vehicleType);
+
+                    if (record.recordType !== 'Kenderaan Berdaftar') {
+                        addField(body, 'Scan Terakhir', record.lastScan);
+                    }
                 }
 
                 card.append(title, body);
