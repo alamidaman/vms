@@ -54,38 +54,28 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
     <div class="setting-list">
       <div class="setting-row">
         <div><div class="setting-name">Admin Email</div><div class="setting-description">Alamat e-mel pentadbir sistem.</div></div>
-        <input id="adminEmail" type="email" autocomplete="off" placeholder="admin@example.com">
+        <input id="adminEmail" type="email" autocomplete="off" value="setiausahappai01@gmail.com" placeholder="admin@example.com">
       </div>
       <div class="setting-row">
         <div><div class="setting-name">Scanner License</div><div class="setting-description">Kawal sama ada pengawal perlu memuat naik lesen ketika imbasan.</div></div>
-        <select id="scannerLicense"><option value="Yes">Yes</option><option value="No">No</option></select>
+        <select id="scannerLicense"><option value="Yes">Yes</option><option value="No" selected>No</option></select>
       </div>
       <div class="setting-row">
         <div><div class="setting-name">Register License</div><div class="setting-description">Kawal keperluan lesen semasa pendaftaran.</div></div>
-        <select id="registerLicense"><option value="Yes">Yes</option><option value="No">No</option></select>
+        <select id="registerLicense"><option value="Yes" selected>Yes</option><option value="No">No</option></select>
       </div>
       <div class="setting-row">
         <div><div class="setting-name">Allow All OH</div><div class="setting-description">Kawal sama ada semua permohonan Open House dibenarkan.</div></div>
-        <select id="allowAllOH"><option value="Yes">Yes</option><option value="No">No</option></select>
+        <select id="allowAllOH"><option value="Yes">Yes</option><option value="No" selected>No</option></select>
       </div>
     </div>
     <div class="actions">
       <button type="button" class="btn-light" id="reload">MUAT SEMULA</button>
       <button type="button" class="btn-green" id="save">SIMPAN TETAPAN</button>
     </div>
-    <div id="status" class="status-message">Sila masukkan token admin untuk memuatkan tetapan.</div>
+    <div id="status" class="status-message">Paparan awal menggunakan nilai tetapan semasa yang diberikan. Penyegerakan dan penyimpanan ke Google Sheets memerlukan sambungan API yang disahkan.</div>
   </section>
 
-  <section class="panel">
-    <h3>🔐 Sambungan API</h3>
-    <div class="help">
-      Token admin dimasukkan semasa halaman dibuka dan hanya disimpan dalam memori halaman ini. Jangan masukkan token ke dalam kod HTML atau commit token ke GitHub.
-    </div>
-    <div style="margin-top:14px" class="setting-row">
-      <div><div class="setting-name">Admin API Token</div><div class="setting-description">Token yang sama dengan Script Property SETTINGS_ADMIN_TOKEN.</div></div>
-      <input id="adminToken" type="password" autocomplete="off" placeholder="Masukkan token admin">
-    </div>
-    <div class="actions"><button type="button" id="connect">SAMBUNG &amp; MUATKAN</button></div>
   </section>
 </main>
 
