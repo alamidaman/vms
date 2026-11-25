@@ -20,7 +20,7 @@ input,select{width:100%;min-width:0;padding:12px 13px;border:1px solid #cbd5e1;b
 button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color:white;font-size:13px;font-weight:bold;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.btn-green{background:var(--green)}.btn-light{background:#e8eef5;color:var(--navy)}
 .status-message{margin-top:14px;font-size:13px;line-height:1.6;color:var(--muted);overflow-wrap:anywhere}.status-message.error{color:var(--red)}.status-message.success{color:var(--green)}
 .table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:13px 12px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:middle}th{color:var(--navy);background:#f5f8fc;white-space:nowrap}td{overflow-wrap:anywhere}.unit{font-weight:bold;color:var(--navy);white-space:nowrap}.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap}.status-valid{background:#e2f5e9;color:#187044}.status-rejected{background:#fde5e5;color:#c62828}.status-unknown{background:#edf2f7;color:#64748b}
-.empty{padding:24px 10px;text-align:center;color:var(--muted);line-height:1.7}
+.empty{padding:24px 10px;text-align:center;color:var(--muted);line-height:1.7}.btn-view-license{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border-radius:7px;background:var(--green);color:#fff;font-size:11px;font-weight:bold;white-space:nowrap}.btn-view-license:hover{filter:brightness(1.08)}
 .pagination{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:18px}.pagination button{min-width:38px;min-height:36px;padding:8px 11px;border:1px solid #d6e0eb;border-radius:8px;background:#fff;color:var(--navy);font-size:12px}.pagination button.active{background:var(--blue);border-color:var(--blue);color:#fff}.pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination .ellipsis{display:inline-flex;align-items:center;justify-content:center;min-width:20px;color:var(--muted);font-size:14px}.pagination-info{width:100%;margin-top:3px;text-align:center;color:var(--muted);font-size:12px}
 .footer{background:var(--navy);color:#d5e2ef;text-align:center;padding:23px 18px;font-size:12px;line-height:1.8}.footer strong{color:white}
 @media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-grid button{width:100%}}
@@ -35,17 +35,18 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
 </div></header>
 <section class="banner"><img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman"><div class="banner-overlay"><div class="banner-content"><h2>Senarai Pelawat</h2><p>Semakan rekod pelawat Alam Idaman mengikut hari dan bulan.</p></div></div></section>
 <main class="container">
-<div class="section-heading"><h2>Rekod Pelawat</h2><p>Pilih paparan harian atau bulanan untuk menyemak rekod lawatan.</p></div>
-<section class="panel"><h3>🔎 Penapis Senarai Pelawat</h3>
+<div class="section-heading"><h2>Rekod Pelawat &amp; Delivery</h2><p>Pilih jenis rekod, kemudian tapis mengikut hari atau bulan.</p></div>
+<section class="panel"><h3>🔎 Penapis Rekod</h3>
 <form id="filterForm" class="filter-grid">
+<div class="form-group"><label for="recordType">Jenis Rekod</label><select id="recordType"><option value="visitor" selected>Pelawat</option><option value="delivery">Delivery</option></select></div>
 <div class="form-group"><label for="period">Paparan</label><select id="period"><option value="daily">Harian</option><option value="monthly">Bulanan</option></select></div>
 <div class="form-group" id="dateGroup"><label for="visitDate">Tarikh</label><input id="visitDate" type="date" required></div>
 <div class="form-group" id="monthGroup" style="display:none"><label for="visitMonth">Bulan</label><input id="visitMonth" type="month"></div>
 <div class="form-group"><label for="q">Carian (Unit / No Plate)</label><input id="q" type="search" placeholder="Contoh: B-00-00 / ABC1234" autocomplete="off"></div>
 <button id="search" type="submit">CARI</button><button id="reset" type="button" class="btn-light">RESET</button>
 </form><div id="status" class="status-message">Sedang mengesahkan sesi login...</div></section>
-<section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 style="margin:0">Senarai Rekod Pelawat</h3><span id="periodLabel" class="status-message" style="margin:0"></span></div>
-<div class="table-wrap"><table><thead><tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr></thead><tbody id="rows"><tr><td colspan="10" class="empty">Pilih tarikh atau bulan untuk memuatkan rekod.</td></tr></tbody></table></div>
+<section class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px"><h3 id="tableTitle" style="margin:0">Senarai Rekod Pelawat</h3><span id="periodLabel" class="status-message" style="margin:0"></span></div>
+<div class="table-wrap"><table><thead id="tableHead"><tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr></thead><tbody id="rows"><tr><td colspan="10" class="empty">Pilih tarikh atau bulan untuk memuatkan rekod.</td></tr></tbody></table></div>
 <div id="pagination" class="pagination" aria-label="Navigasi halaman rekod"></div><div id="count" class="status-message"></div></section>
 </main>
 <footer class="footer"><strong>ALAM IDAMAN</strong><br>Visitor Management System (VMS)<br>Senarai rekod pelawat untuk rujukan pengurusan.</footer>
@@ -62,14 +63,53 @@ function api(task,p={}){return jsonp(API_URL+'?'+new URLSearchParams({action:'vi
 function message(msg,type='success'){$('status').textContent=msg;$('status').className='status-message'+(type==='error'?' error':' success');}
 function dateLocal(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function setFilterFields(){const monthly=$('period').value==='monthly';$('dateGroup').style.display=monthly?'none':'block';$('monthGroup').style.display=monthly?'block':'none';$('visitDate').required=!monthly;$('visitMonth').required=monthly;}
-function render(){const total=records.length,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));currentPage=Math.min(currentPage,totalPages);const start=(currentPage-1)*PAGE_SIZE,items=records.slice(start,start+PAGE_SIZE);
-$('rows').innerHTML=items.length?items.map(r=>{const status=String(r.status||'').trim().toUpperCase();const statusClass=status==='VALID'?'status-valid':status==='REJECTED'?'status-rejected':'status-unknown';return `<tr><td class="unit">${esc(r.unit)}</td><td><b>${esc(r.plate)}</b></td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td>${esc(r.checkIn||'—')}</td><td>${esc(r.purpose)}</td><td>${esc(r.duration)}</td><td>${esc(r.registerDate)}</td><td>${esc(r.lastScan||'—')}</td><td><b>${esc(r.count??0)}</b></td><td>${esc(r.registrarEmail)}</td></tr>`;}).join(''):'<tr><td colspan="10" class="empty">Tiada rekod pelawat ditemui bagi pilihan ini.</td></tr>';
+function render(){
+const total=records.length,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+currentPage=Math.min(currentPage,totalPages);
+const start=(currentPage-1)*PAGE_SIZE,items=records.slice(start,start+PAGE_SIZE);
+const isDelivery=$('recordType').value==='delivery';
+
+if(isDelivery){
+  $('tableTitle').textContent='Senarai Rekod Delivery';
+  $('tableHead').innerHTML='<tr><th>Lihat Lesen</th><th>Tarikh / Masa</th><th>Delivery ID</th><th>Guard</th><th>Delivery Company</th><th>No. Plate</th></tr>';
+  $('rows').innerHTML=items.length?items.map(r=>{
+    const license=r.licenseUrl
+      ? `<a class="btn-view-license" href="${esc(r.licenseUrl)}" target="_blank" rel="noopener noreferrer">LIHAT LESEN</a>`
+      : '<span class="status-badge status-unknown">TIADA LESEN</span>';
+    return `<tr><td>${license}</td><td>${esc(r.timestamp||'—')}</td><td>${esc(r.deliveryId||'—')}</td><td>${esc(r.guard||'—')}</td><td>${esc(r.deliveryCompany||'—')}</td><td><b>${esc(r.plate||'—')}</b></td></tr>`;
+  }).join(''):'<tr><td colspan="6" class="empty">Tiada rekod Delivery ditemui bagi pilihan ini.</td></tr>';
+}else{
+  $('tableTitle').textContent='Senarai Rekod Pelawat';
+  $('tableHead').innerHTML='<tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr>';
+  $('rows').innerHTML=items.length?items.map(r=>{
+    const status=String(r.status||'').trim().toUpperCase();
+    const statusClass=status==='VALID'?'status-valid':status==='REJECTED'?'status-rejected':'status-unknown';
+    return `<tr><td class="unit">${esc(r.unit)}</td><td><b>${esc(r.plate)}</b></td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td>${esc(r.checkIn||'—')}</td><td>${esc(r.purpose)}</td><td>${esc(r.duration)}</td><td>${esc(r.registerDate)}</td><td>${esc(r.lastScan||'—')}</td><td><b>${esc(r.count??0)}</b></td><td>${esc(r.registrarEmail)}</td></tr>`;
+  }).join(''):'<tr><td colspan="10" class="empty">Tiada rekod pelawat ditemui bagi pilihan ini.</td></tr>';
+}
 $('count').textContent=total?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod.`:'0 rekod ditemui';
-const pag=$('pagination');if(totalPages<=1){pag.innerHTML='';return;}let out=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;const pages=new Set([1,totalPages]);for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);let prev=0;for(const p of [...pages].sort((a,b)=>a-b)){if(prev&&p-prev>1)out+='<span class="ellipsis">…</span>';out+=`<button type="button" data-page="${p}" class="${p===currentPage?'active':''}" ${p===currentPage?'aria-current="page"':''}>${p}</button>`;prev=p;}out+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button><div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;pag.innerHTML=out;}
-async function search(){message('Sedang mendapatkan rekod pelawat...');$('rows').innerHTML='<tr><td colspan="10" class="empty">Memuatkan rekod...</td></tr>';$('pagination').innerHTML='';const p={period:$('period').value,q:$('q').value.trim()};if(p.period==='daily')p.date=$('visitDate').value;else p.month=$('visitMonth').value;
-const result=await api('search',p);if(!result.success)throw Error(result.message||'Carian rekod gagal.');records=result.records||[];currentPage=1;$('periodLabel').textContent=p.period==='daily'?'Tarikh: '+p.date:'Bulan: '+p.month;render();message('Carian selesai. '+records.length+' rekod ditemui.');}
+const pag=$('pagination');if(totalPages<=1){pag.innerHTML='';return;}
+let out=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;
+const pages=new Set([1,totalPages]);for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);
+let prev=0;for(const p of [...pages].sort((a,b)=>a-b)){if(prev&&p-prev>1)out+='<span class="ellipsis">…</span>';out+=`<button type="button" data-page="${p}" class="${p===currentPage?'active':''}" ${p===currentPage?'aria-current="page"':''}>${p}</button>`;prev=p;}
+out+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button><div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;pag.innerHTML=out;
+}
+async function search(){
+const isDelivery=$('recordType').value==='delivery';
+const label=isDelivery?'Delivery':'pelawat';
+message('Sedang mendapatkan rekod '+label+'...');
+$('rows').innerHTML='<tr><td colspan="'+(isDelivery?6:10)+'" class="empty">Memuatkan rekod...</td></tr>';
+$('pagination').innerHTML='';
+const p={period:$('period').value,q:$('q').value.trim()};
+if(p.period==='daily')p.date=$('visitDate').value;else p.month=$('visitMonth').value;
+const result=await api(isDelivery?'delivery':'search',p);
+if(!result.success)throw Error(result.message||'Carian rekod gagal.');
+records=result.records||[];currentPage=1;
+$('periodLabel').textContent=p.period==='daily'?'Tarikh: '+p.date:'Bulan: '+p.month;
+render();message('Carian selesai. '+records.length+' rekod '+label+' ditemui.');
+}
 async function loginCheck(){return jsonp(LOGIN_API_URL,{action:'api',task:'me'});}
-$('period').onchange=setFilterFields;$('filterForm').onsubmit=e=>{e.preventDefault();search().catch(e=>message(e.message,'error'));};
+$('period').onchange=setFilterFields;$('recordType').onchange=()=>{$('q').placeholder=$('recordType').value==='delivery'?'Contoh: ABC1234 / J&T / Guard':'Contoh: B-00-00 / ABC1234';search().catch(e=>message(e.message,'error'));};$('filterForm').onsubmit=e=>{e.preventDefault();search().catch(e=>message(e.message,'error'));};
 $('reset').onclick=()=>{$('q').value='';$('period').value='daily';$('visitDate').value=dateLocal();$('visitMonth').value=dateLocal().slice(0,7);setFilterFields();search().catch(e=>message(e.message,'error'));};
 $('pagination').onclick=e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const p=Number(b.dataset.page);if(p<1||p>Math.ceil(records.length/PAGE_SIZE))return;currentPage=p;render();};
 $('logout').onclick=async()=>{try{await jsonp(LOGIN_API_URL,{action:'api',task:'logout'});}catch(e){}sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);};
