@@ -35,10 +35,10 @@ button{border:0;border-radius:8px;padding:12px 18px;background:var(--blue);color
 </div></header>
 <section class="banner"><img src="../banner.jpg" alt="Kawasan perumahan Alam Idaman"><div class="banner-overlay"><div class="banner-content"><h2>Senarai Pelawat</h2><p>Semakan rekod pelawat Alam Idaman mengikut hari dan bulan.</p></div></div></section>
 <main class="container">
-<div class="section-heading"><h2>Rekod Pelawat &amp; Delivery</h2><p>Pilih jenis rekod, kemudian tapis mengikut hari atau bulan.</p></div>
+<div class="section-heading"><h2>Rekod Pelawat, Delivery &amp; Open House</h2><p>Pilih jenis rekod, kemudian tapis mengikut hari atau bulan.</p></div>
 <section class="panel"><h3>🔎 Penapis Rekod</h3>
 <form id="filterForm" class="filter-grid">
-<div class="form-group"><label for="recordType">Jenis Rekod</label><select id="recordType"><option value="visitor" selected>Pelawat</option><option value="delivery">Delivery</option></select></div>
+<div class="form-group"><label for="recordType">Jenis Rekod</label><select id="recordType"><option value="visitor" selected>Pelawat</option><option value="delivery">Delivery</option><option value="openhouse">Open House</option></select></div>
 <div class="form-group"><label for="period">Paparan</label><select id="period"><option value="daily">Harian</option><option value="monthly">Bulanan</option></select></div>
 <div class="form-group" id="dateGroup"><label for="visitDate">Tarikh</label><input id="visitDate" type="date" required></div>
 <div class="form-group" id="monthGroup" style="display:none"><label for="visitMonth">Bulan</label><input id="visitMonth" type="month"></div>
@@ -64,52 +64,64 @@ function message(msg,type='success'){$('status').textContent=msg;$('status').cla
 function dateLocal(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function setFilterFields(){const monthly=$('period').value==='monthly';$('dateGroup').style.display=monthly?'none':'block';$('monthGroup').style.display=monthly?'block':'none';$('visitDate').required=!monthly;$('visitMonth').required=monthly;}
 function render(){
-const total=records.length,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
-currentPage=Math.min(currentPage,totalPages);
-const start=(currentPage-1)*PAGE_SIZE,items=records.slice(start,start+PAGE_SIZE);
-const isDelivery=$('recordType').value==='delivery';
+ const total=records.length,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+ currentPage=Math.min(currentPage,totalPages);
+ const start=(currentPage-1)*PAGE_SIZE,items=records.slice(start,start+PAGE_SIZE);
+ const type=$('recordType').value;
+ const isDelivery=type==='delivery',isOpenHouse=type==='openhouse';
 
-if(isDelivery){
-  $('tableTitle').textContent='Senarai Rekod Delivery';
-  $('tableHead').innerHTML='<tr><th>Tarikh / Masa</th><th>Lihat Lesen</th><th>No. Plate</th><th>Delivery Company</th><th>Delivery ID</th></tr>';
-  $('rows').innerHTML=items.length?items.map(r=>{
-    const license=r.licenseUrl
-      ? `<a class="btn-view-license" href="${esc(r.licenseUrl)}" target="_blank" rel="noopener noreferrer">LIHAT LESEN</a>`
-      : '<span class="status-badge status-unknown">TIADA LESEN</span>';
-    return `<tr><td>${esc(r.timestamp||'—')}</td><td>${license}</td><td><b>${esc(r.plate||'—')}</b></td><td>${esc(r.deliveryCompany||'—')}</td><td>${esc(r.deliveryId||'—')}</td></tr>`;
-  }).join(''):'<tr><td colspan="5" class="empty">Tiada rekod Delivery ditemui bagi pilihan ini.</td></tr>';
-}else{
-  $('tableTitle').textContent='Senarai Rekod Pelawat';
-  $('tableHead').innerHTML='<tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr>';
-  $('rows').innerHTML=items.length?items.map(r=>{
-    const status=String(r.status||'').trim().toUpperCase();
-    const statusClass=status==='VALID'?'status-valid':status==='REJECTED'?'status-rejected':'status-unknown';
-    return `<tr><td class="unit">${esc(r.unit)}</td><td><b>${esc(r.plate)}</b></td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td>${esc(r.checkIn||'—')}</td><td>${esc(r.purpose)}</td><td>${esc(r.duration)}</td><td>${esc(r.registerDate)}</td><td>${esc(r.lastScan||'—')}</td><td><b>${esc(r.count??0)}</b></td><td>${esc(r.registrarEmail)}</td></tr>`;
-  }).join(''):'<tr><td colspan="10" class="empty">Tiada rekod pelawat ditemui bagi pilihan ini.</td></tr>';
-}
-$('count').textContent=total?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod.`:'0 rekod ditemui';
-const pag=$('pagination');if(totalPages<=1){pag.innerHTML='';return;}
-let out=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;
-const pages=new Set([1,totalPages]);for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);
-let prev=0;for(const p of [...pages].sort((a,b)=>a-b)){if(prev&&p-prev>1)out+='<span class="ellipsis">…</span>';out+=`<button type="button" data-page="${p}" class="${p===currentPage?'active':''}" ${p===currentPage?'aria-current="page"':''}>${p}</button>`;prev=p;}
-out+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button><div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;pag.innerHTML=out;
+ if(isDelivery){
+   $('tableTitle').textContent='Senarai Rekod Delivery';
+   $('tableHead').innerHTML='<tr><th>Tarikh / Masa</th><th>Lihat Lesen</th><th>No. Plate</th><th>Delivery Company</th><th>Delivery ID</th></tr>';
+   $('rows').innerHTML=items.length?items.map(r=>{
+     const license=r.licenseUrl
+       ? `<a class="btn-view-license" href="${esc(r.licenseUrl)}" target="_blank" rel="noopener noreferrer">LIHAT LESEN</a>`
+       : '<span class="status-badge status-unknown">TIADA LESEN</span>';
+     return `<tr><td>${esc(r.timestamp||'—')}</td><td>${license}</td><td><b>${esc(r.plate||'—')}</b></td><td>${esc(r.deliveryCompany||'—')}</td><td>${esc(r.deliveryId||'—')}</td></tr>`;
+   }).join(''):'<tr><td colspan="5" class="empty">Tiada rekod Delivery ditemui bagi pilihan ini.</td></tr>';
+ }else if(isOpenHouse){
+   $('tableTitle').textContent='Senarai Rekod Open House';
+   $('tableHead').innerHTML='<tr><th>Tarikh Open House</th><th>Tarikh Daftar</th><th>Unit Rumah</th><th>Nama Tuan Rumah</th><th>No. Telefon</th><th>Status</th><th>Open House ID</th><th>Count</th><th>Email Pendaftar</th></tr>';
+   $('rows').innerHTML=items.length?items.map(r=>{
+     const status=String(r.status||'').trim().toUpperCase();
+     const statusClass=status==='APPROVED'||status==='VALID'?'status-valid':status==='REJECTED'?'status-rejected':'status-unknown';
+     return `<tr><td>${esc(r.eventDate||'—')}</td><td>${esc(r.registerDate||'—')}</td><td class="unit">${esc(r.unit||'—')}</td><td>${esc(r.hostName||'—')}</td><td>${esc(r.phone||'—')}</td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td><b>${esc(r.openHouseId||'—')}</b></td><td><b>${esc(r.count??0)}</b></td><td>${esc(r.registrantEmail||r.hostEmail||'—')}</td></tr>`;
+   }).join(''):'<tr><td colspan="9" class="empty">Tiada rekod Open House ditemui bagi pilihan ini.</td></tr>';
+ }else{
+   $('tableTitle').textContent='Senarai Rekod Pelawat';
+   $('tableHead').innerHTML='<tr><th>Unit Rumah</th><th>No Plate</th><th>Status</th><th>Check In</th><th>Tujuan Lawatan</th><th>Tempoh</th><th>Tarikh Daftar</th><th>Scan Terakhir</th><th>Count</th><th>Email Pendaftar</th></tr>';
+   $('rows').innerHTML=items.length?items.map(r=>{
+     const status=String(r.status||'').trim().toUpperCase();
+     const statusClass=status==='VALID'?'status-valid':status==='REJECTED'?'status-rejected':'status-unknown';
+     return `<tr><td class="unit">${esc(r.unit)}</td><td><b>${esc(r.plate)}</b></td><td><span class="status-badge ${statusClass}">${esc(status||'—')}</span></td><td>${esc(r.checkIn||'—')}</td><td>${esc(r.purpose)}</td><td>${esc(r.duration)}</td><td>${esc(r.registerDate)}</td><td>${esc(r.lastScan||'—')}</td><td><b>${esc(r.count??0)}</b></td><td>${esc(r.registrarEmail)}</td></tr>`;
+   }).join(''):'<tr><td colspan="10" class="empty">Tiada rekod pelawat ditemui bagi pilihan ini.</td></tr>';
+ }
+ $('count').textContent=total?`Memaparkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} daripada ${total} rekod.`:'0 rekod ditemui';
+ const pag=$('pagination');if(totalPages<=1){pag.innerHTML='';return;}
+ let out=`<button type="button" data-page="${currentPage-1}" ${currentPage===1?'disabled':''}>‹ Sebelum</button>`;
+ const pages=new Set([1,totalPages]);for(let p=Math.max(1,currentPage-2);p<=Math.min(totalPages,currentPage+2);p++)pages.add(p);
+ let prev=0;for(const p of [...pages].sort((a,b)=>a-b)){if(prev&&p-prev>1)out+='<span class="ellipsis">…</span>';out+=`<button type="button" data-page="${p}" class="${p===currentPage?'active':''}" ${p===currentPage?'aria-current="page"':''}>${p}</button>`;prev=p;}
+ out+=`<button type="button" data-page="${currentPage+1}" ${currentPage===totalPages?'disabled':''}>Seterusnya ›</button><div class="pagination-info">Halaman ${currentPage} daripada ${totalPages}</div>`;pag.innerHTML=out;
 }
 async function search(){
-const isDelivery=$('recordType').value==='delivery';
-const label=isDelivery?'Delivery':'pelawat';
-message('Sedang mendapatkan rekod '+label+'...');
-$('rows').innerHTML='<tr><td colspan="'+(isDelivery?5:10)+'" class="empty">Memuatkan rekod...</td></tr>';
-$('pagination').innerHTML='';
-const p={period:$('period').value,q:$('q').value.trim()};
-if(p.period==='daily')p.date=$('visitDate').value;else p.month=$('visitMonth').value;
-const result=await api(isDelivery?'delivery':'search',p);
-if(!result.success)throw Error(result.message||'Carian rekod gagal.');
-records=result.records||[];currentPage=1;
-$('periodLabel').textContent=p.period==='daily'?'Tarikh: '+p.date:'Bulan: '+p.month;
-render();message('Carian selesai. '+records.length+' rekod '+label+' ditemui.');
+ const type=$('recordType').value;
+ const isDelivery=type==='delivery',isOpenHouse=type==='openhouse';
+ const label=isDelivery?'Delivery':isOpenHouse?'Open House':'pelawat';
+ message('Sedang mendapatkan rekod '+label+'...');
+ const colspan=isDelivery?5:isOpenHouse?9:10;
+ $('rows').innerHTML='<tr><td colspan="'+colspan+'" class="empty">Memuatkan rekod...</td></tr>';
+ $('pagination').innerHTML='';
+ const p={period:$('period').value,q:$('q').value.trim()};
+ if(p.period==='daily')p.date=$('visitDate').value;else p.month=$('visitMonth').value;
+ const task=isDelivery?'delivery':isOpenHouse?'openhouse':'search';
+ const result=await api(task,p);
+ if(!result.success)throw Error(result.message||'Carian rekod gagal.');
+ records=result.records||[];currentPage=1;
+ $('periodLabel').textContent=p.period==='daily'?'Tarikh: '+p.date:'Bulan: '+p.month;
+ render();message('Carian selesai. '+records.length+' rekod '+label+' ditemui.');
 }
 async function loginCheck(){return jsonp(LOGIN_API_URL,{action:'api',task:'me'});}
-$('period').onchange=setFilterFields;$('recordType').onchange=()=>{$('q').placeholder=$('recordType').value==='delivery'?'Contoh: ABC1234 / J&T / Guard':'Contoh: B-00-00 / ABC1234';search().catch(e=>message(e.message,'error'));};$('filterForm').onsubmit=e=>{e.preventDefault();search().catch(e=>message(e.message,'error'));};
+$('period').onchange=setFilterFields;$('recordType').onchange=()=>{const type=$('recordType').value;$('q').placeholder=type==='delivery'?'Contoh: ABC1234 / J&T / Guard':type==='openhouse'?'Contoh: B-00-00 / Nama Tuan Rumah / OH ID':'Contoh: B-00-00 / ABC1234';search().catch(e=>message(e.message,'error'));};$('filterForm').onsubmit=e=>{e.preventDefault();search().catch(e=>message(e.message,'error'));};
 $('reset').onclick=()=>{$('q').value='';$('period').value='daily';$('visitDate').value=dateLocal();$('visitMonth').value=dateLocal().slice(0,7);setFilterFields();search().catch(e=>message(e.message,'error'));};
 $('pagination').onclick=e=>{const b=e.target.closest('[data-page]');if(!b||b.disabled)return;const p=Number(b.dataset.page);if(p<1||p>Math.ceil(records.length/PAGE_SIZE))return;currentPage=p;render();};
 $('logout').onclick=async()=>{try{await jsonp(LOGIN_API_URL,{action:'api',task:'logout'});}catch(e){}sessionStorage.removeItem(TOKEN_KEY);location.replace(LOGIN_URL);};
